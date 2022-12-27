@@ -1,8 +1,19 @@
 # Build stage 0
-FROM elixir:1.14.2 as base
+FROM elixir:1.13 as base
+#FROM erlang:latest as base
 
 RUN apt-get update
-RUN apt-get install -y libcap-dev
+RUN apt-get install -y libcap-dev locales
+#set locale to utf8
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen
+ENV LANG en_US.UTF-8  
+ENV LANGUAGE en_US:en  
+ENV LC_ALL en_US.UTF-8  
+#install elixir
+#RUN cd /tmp; wget https://github.com/elixir-lang/elixir/releases/download/v1.14.1/elixir-otp-25.zip 
+#RUN mkdir -p /opt/elixir; cd /opt/elixir; unzip /tmp/elixir-otp-25.zip
+#ENV PATH="${PATH}:/opt/elixir/bin"
 
 #Set working directory
 RUN mkdir /data
@@ -25,9 +36,10 @@ RUN mix --version
 #Build the release
 RUN MIX_ENV=dev mix release
 
-FROM base as deploy
+#FROM debian:bullseye-slim as deploy
+FROM compile as deploy
 
-RUN apt-get update && apt-get install -y iptables ipset less ack lsb-release vim jq curl
+RUN apt-get update && apt-get install -y iptables ipset less ack lsb-release vim-tiny jq curl
 
 
 RUN mkdir -p /opt/dog_ex
@@ -56,3 +68,4 @@ RUN mkdir -p /etc/dog_ex/certs \
 	&& chmod 700 /etc/dog_ex/private
 
 CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog_agent_ex start" 
+#CMD ["sleep", "infinity"]
