@@ -4,6 +4,8 @@
 
 
 defmodule :dog_turtle_sup do
+  require Record
+  require AMQPCore
 
   defmacrop erlconst_SERVER() do
     quote do
@@ -36,7 +38,11 @@ defmodule :dog_turtle_sup do
   def ips_publisher_spec() do
     publisherName = :ips_publisher
     connName = :default
-    aMQPDecls = []
+    aMQPDecls = [
+      AMQPCore.exchange_declare(exchange: "ips", type: "topic", durable: true),
+      AMQPCore.queue_declare(queue: "ips", auto_delete: false, durable: true),
+      AMQPCore.queue_bind(queue: "ips", exchange: "ips", routing_key: "#")
+    ]
     aMQPPoolChildSpec = :turtle_publisher.child_spec(publisherName, connName, aMQPDecls, %{confirms: true, passive: false, rpc: false})
     aMQPPoolChildSpec
   end
@@ -46,7 +52,16 @@ defmodule :dog_turtle_sup do
     queueName = :erlang.iolist_to_binary(["iptables.", hostkey])
     groupRoutingKey = :erlang.iolist_to_binary([environment, '.', location, '.', group, '.*'])
     hostRoutingKey = :erlang.iolist_to_binary([environment, '.', location, '.*.', hostkey])
-    config = %{name: :iptables_service, connection: :default, function: &:dog_iptables.subscriber_loop/4, handle_info: &:dog_iptables_agent.handle_info/2, init_state: %{}, declarations: [], subscriber_count: 1, prefetch_count: 1, consume_queue: queueName, passive: false}
+    config = %{name: :iptables_service, connection: :default, function: &:dog_iptables.subscriber_loop/4, handle_info: &:dog_iptables_agent.handle_info/2, init_state: %{}, 
+      declarations: [
+          AMQPCore.exchange_declare(exchange: "ipsets", type: "fanout", durable: true),
+          AMQPCore.exchange_declare(exchange: "iptables", type: "topic", durable: true),
+          AMQPCore.queue_declare(queue: queueName , auto_delete: true, durable: true),
+          AMQPCore.queue_bind(queue: queueName, exchange: "ipsets", routing_key: "fanout" ),
+          AMQPCore.queue_bind(queue: queueName, exchange: "iptables", routing_key: hostRoutingKey ),
+          AMQPCore.queue_bind(queue: queueName, exchange: "iptables", routing_key: groupRoutingKey )
+      ], 
+      subscriber_count: 1, prefetch_count: 1, consume_queue: queueName, passive: false}
     serviceSpec = :turtle_service.child_spec(config)
     serviceSpec
   end
@@ -54,7 +69,13 @@ defmodule :dog_turtle_sup do
 
   def config_service_spec(hostkey) do
     queueName = :erlang.iolist_to_binary(["config.", hostkey])
-    config = %{name: :dog_config_service, connection: :default, function: &:dog_config.subscriber_loop/4, handle_info: &:dog_agent.handle_info/2, init_state: %{}, declarations: [], subscriber_count: 1, prefetch_count: 1, consume_queue: queueName, passive: false}
+    config = %{name: :dog_config_service, connection: :default, function: &:dog_config.subscriber_loop/4, handle_info: &:dog_agent.handle_info/2, init_state: %{}, 
+      declarations: [
+          AMQPCore.exchange_declare(exchange: "config", type: "direct", durable: true),
+          AMQPCore.queue_declare(queue: queueName , auto_delete: true, durable: true),
+          AMQPCore.queue_bind(queue: queueName, exchange: "config", routing_key: hostkey )
+      ], 
+      subscriber_count: 1, prefetch_count: 1, consume_queue: queueName, passive: false}
     serviceSpec = :turtle_service.child_spec(config)
     serviceSpec
   end
@@ -64,7 +85,14 @@ defmodule :dog_turtle_sup do
     groupRoutingKey = :erlang.iolist_to_binary([environment, '.', location, '.', group, '.*'])
     hostRoutingKey = :erlang.iolist_to_binary([environment, '.', location, '.*.', hostkey])
     queueName = :erlang.iolist_to_binary(["file_transfer.", hostkey])
-    config = %{name: :file_transfer_service, connection: :default, function: &:dog_file_transfer.subscriber_loop/4, handle_info: &:dog_file_transfer.handle_info/2, init_state: %{}, declarations: [], subscriber_count: 1, prefetch_count: 1, consume_queue: queueName, passive: false}
+    config = %{name: :file_transfer_service, connection: :default, function: &:dog_file_transfer.subscriber_loop/4, handle_info: &:dog_file_transfer.handle_info/2, init_state: %{}, 
+      declarations: [
+            AMQPCore.exchange_declare(exchange: "file_transfer", type: "topic", durable: true),
+            AMQPCore.queue_declare(queue: queueName, auto_delete: true, durable: true),
+            AMQPCore.queue_bind(queue: queueName, exchange: "file_transfer", routing_key: groupRoutingKey),
+            AMQPCore.queue_bind(queue: queueName, exchange: "file_transfer", routing_key: hostRoutingKey)
+      ], 
+      subscriber_count: 1, prefetch_count: 1, consume_queue: queueName, passive: false}
     serviceSpec = :turtle_service.child_spec(config)
     serviceSpec
   end
