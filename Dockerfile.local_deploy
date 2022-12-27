@@ -1,0 +1,58 @@
+# Build stage 0
+FROM elixir:1.14.2 as base
+
+RUN apt-get update
+RUN apt-get install -y libcap-dev
+
+#Set working directory
+RUN mkdir /data
+WORKDIR /data
+COPY mix.exs .
+COPY mix.lock .
+RUN mix local.hex --force
+RUN mix local.rebar --force
+RUN mix deps.get
+RUN mix compile
+
+FROM base as compile
+
+WORKDIR /data
+COPY . .
+COPY --from=base /data/_build .
+copy config/*.exs config/
+
+RUN mix --version
+#Build the release
+RUN MIX_ENV=dev mix release
+
+FROM base as deploy
+
+RUN apt-get update && apt-get install -y iptables ipset less ack lsb-release vim jq curl
+
+
+RUN mkdir -p /opt/dog_ex
+RUN mkdir -p /etc/dog_ex
+RUN mkdir -p /etc/iptables
+copy config/dev.exs /etc/dog/dog.config
+COPY config/config.json.dev /etc/dog/config.json
+RUN mkdir -p /var/log/dog_ex
+# Install the released application
+COPY --from=compile /data/_build/dev/rel/dog_agent_ex /opt/dog_ex
+#RUN chmod 4555 /opt/dog/lib/erlexec-1.20.1/priv/x86_64-pc-linux-gnu/exec-port
+RUN mkdir -p /home/dog_ex/bin
+RUN cp /usr/sbin/ipset /home/dog_ex/bin/ipset
+RUN cp /usr/sbin/iptables-save /home/dog_ex/bin/
+RUN cp /usr/sbin/ip6tables-save /home/dog_ex/bin/
+RUN cp /usr/sbin/iptables-restore /home/dog_ex/bin/
+RUN cp /usr/sbin/ip6tables-restore /home/dog_ex/bin/
+
+RUN ls -latr /opt/dog_ex
+
+RUN mkdir /etc/rabbitmq
+COPY csc_certs.sh /etc/rabbitmq/ 
+
+RUN mkdir -p /etc/dog_ex/certs \
+	&& mkdir -p /etc/dog_ex/private \
+	&& chmod 700 /etc/dog_ex/private
+
+CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog_agent_ex start" 
