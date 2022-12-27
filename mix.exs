@@ -15,7 +15,7 @@ defmodule DogAgentEx.MixProject do
   def application do
     [
       extra_applications: extra_applications(Mix.env()),
-      mod: {:dog, []}
+      mod: {:dog_agent_ex, []}
     ]
   end
 

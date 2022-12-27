@@ -30,7 +30,7 @@ import Config
 #     import_config "#Mix.env().exs"
 #
 
-config :dog,
+config :dog_agent_ex,
   version: "7342b0908e4dbf8daf70ccf3f18422c7d654c504",
   enforcing: true,
   use_ipsets: true
