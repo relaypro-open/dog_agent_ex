@@ -17,9 +17,9 @@ config :turtle,
     password: "guest",
     virtual_host: "dog",
     ssl_options: [
-      cacertfile: '/etc/dog/certs/ca.crt',
-      certfile:   '/etc/dog/certs/server.crt',
-      keyfile:    '/etc/dog/private/server.key',
+      cacertfile: '/etc/dog_ex/certs/ca.crt',
+      certfile:   '/etc/dog_ex/certs/server.crt',
+      keyfile:    '/etc/dog_ex/private/server.key',
       verify: :verify_peer,
       server_name_indication: :disable,
       fail_if_no_peer_cert: true

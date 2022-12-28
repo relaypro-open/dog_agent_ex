@@ -6,8 +6,14 @@ defmodule DogAgentEx.MixProject do
       app: :dog_agent_ex,
       version: "0.1.0",
       elixir: "~> 1.13",
-      start_permanent: Mix.env() == :prod,
-      deps: deps()
+      start_permanent: Mix.env() == :dev,
+      deps: deps(),
+      releases: [
+        dog_agent_ex: [
+          include_executables_for: [:unix],
+          applications: [runtime_tools: :permanent]
+        ]
+      ]
     ]
   end
 
@@ -20,7 +26,7 @@ defmodule DogAgentEx.MixProject do
   end
 
   defp extra_applications(:dev), do: extra_applications(:all) ++ [:remix]
-  defp extra_applications(_all), do: [:logger]
+  defp extra_applications(_all), do: [:logger, :turtle]
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
