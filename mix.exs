@@ -3,13 +3,13 @@ defmodule DogAgentEx.MixProject do
 
   def project do
     [
-      app: :dog_agent_ex,
+      app: :dog,
       version: "0.1.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :dev,
       deps: deps(),
       releases: [
-        dog_agent_ex: [
+        dog: [
           include_executables_for: [:unix],
           applications: [runtime_tools: :permanent]
         ]
@@ -21,11 +21,11 @@ defmodule DogAgentEx.MixProject do
   def application do
     [
       extra_applications: extra_applications(Mix.env()),
-      mod: {:dog_agent_ex, []}
+      mod: {:dog, []}
     ]
   end
 
-  defp extra_applications(:dev), do: extra_applications(:all) ++ [:remix]
+  #defp extra_applications(:dev), do: extra_applications(:all) ++ [:remix]
   defp extra_applications(_all), do: [:logger, :turtle]
 
   # Run "mix help deps" to learn about dependencies.
@@ -40,11 +40,12 @@ defmodule DogAgentEx.MixProject do
     {:jsx, git: "https://github.com/talentdeficit/jsx.git", tag: "v2.8.3", override: true},
     {:logger_file_backend, "~> 0.0.11"},
     {:parse_trans, "3.4.1", override: true},
-    {:remix, "~> 0.0.1", only: :dev},
+    #{:remix, "~> 0.0.1", only: :dev},
     {:turtle, git: "https://github.com/relaypro-open/turtle.git", branch: "feature/remove_lager"},
     {:uuid, ">=0.0.0", hex: "uuid_erl"},
     {:exometer_core, git: "https://github.com/fkrause98/exometer_core.git", override: true},
-    {:erlsh, git: "https://github.com/proger/erlsh.git", tag: "2", override: true}
+    {:erlsh, git: "https://github.com/proger/erlsh.git", tag: "2", override: true},
+    {:erlexec, git: "https://github.com/saleyn/erlexec.git", branch: "master"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]

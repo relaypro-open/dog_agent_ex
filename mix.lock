@@ -7,6 +7,7 @@
   "certifi": {:hex, :certifi, "2.9.0", "6f2a475689dd47f19fb74334859d460a2dc4e3252a3324bd2111b8f0429e7e21", [:rebar3], [], "hexpm", "266da46bdb06d6c6d35fde799bcb28d36d985d424ad7c08b5bb48f5b5cdd4641"},
   "credentials_obfuscation": {:hex, :credentials_obfuscation, "3.1.0", "2c405ea0c5db7b3344aa5a99f86c33e7b6ecea97d2cb613371e1cf0d192ef2c6", [:rebar3], [], "hexpm", "04884e62b1c6cdfba999d4d6b3e99bc0a59d5e439517bc5c01767255afb7b778"},
   "erldocker": {:git, "https://github.com/Phonebooth/erldocker.git", "7641bb23b11eabdfb192206e9b3f63ebfe1e5424", [branch: "feature/remove_lager"]},
+  "erlexec": {:git, "https://github.com/saleyn/erlexec.git", "471ebef9bd9abc1884104a76aeb081e6c86b5ff4", [branch: "master"]},
   "erlsh": {:git, "https://github.com/proger/erlsh.git", "4e8a107e4a082b5e687877cf08d152a45a715bf4", [tag: "2"]},
   "exometer_core": {:git, "https://github.com/fkrause98/exometer_core.git", "8eb43a931234897a051c41d91b38c15994c442db", []},
   "flatlog": {:git, "https://github.com/ferd/flatlog.git", "553ef2b09c8a3d2b02c7395251cee397f7cb3839", [tag: "v0.1.2"]},

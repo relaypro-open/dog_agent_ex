@@ -49,7 +49,9 @@ copy config/dev.exs /etc/dog/dog.config
 COPY config/config.json.dev /etc/dog/config.json
 RUN mkdir -p /var/log/dog_ex
 # Install the released application
-COPY --from=compile /data/_build/dev/rel/dog_agent_ex /opt/dog_ex
+COPY --from=compile /data/_build/dev/rel/dog /opt/dog_ex
+#COPY _build/dev/rel/dog_agent_ex /opt/dog_ex
+
 #RUN chmod 4555 /opt/dog/lib/erlexec-1.20.1/priv/x86_64-pc-linux-gnu/exec-port
 RUN mkdir -p /home/dog_ex/bin
 RUN cp /usr/sbin/ipset /home/dog_ex/bin/ipset
@@ -67,5 +69,6 @@ RUN mkdir -p /etc/dog_ex/certs \
 	&& mkdir -p /etc/dog_ex/private \
 	&& chmod 700 /etc/dog_ex/private
 
-CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog_agent_ex start" 
-#CMD ["sleep", "infinity"]
+CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog start"
+#CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog start"; /bin/bash -c "sleep infinity"
+#CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "sleep infinity"

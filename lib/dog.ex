@@ -3,7 +3,7 @@
 # At: 2022-12-26 15:52:14
 
 
-defmodule :dog_app do
+defmodule :dog do
 
   @behaviour :application
 
@@ -23,7 +23,8 @@ defmodule :dog_app do
 
   def get_version() do
     {:ok, version} = :application.get_env(:dog, :version)
-    {:ok, :binary.list_to_bin(version)}
+    #{:ok, :binary.list_to_bin(version)}
+    {:ok, version}
   end
 
 end

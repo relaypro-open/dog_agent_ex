@@ -43,7 +43,7 @@ defmodule :dog_ips do
     hash4Iptables = :dog_iptables.create_hash(:dog_iptables.read_current_ipv4_iptables())
     hash6Iptables = :dog_iptables.create_hash(:dog_iptables.read_current_ipv6_iptables())
     ipsetHash = :dog_ipset.read_hash()
-    {:ok, version} = :dog_app.get_version()
+    {:ok, version} = :dog.get_version()
     updateType = :update
     stateNew = :dog_state.from_map(%{"ec2_region" => ec2Region, "ec2_availability_zone" => ec2AvailabilityZone, "ec2_instance_id" => ec2InstanceId, "ec2_owner_id" => ec2OwnerId, "ec2_security_group_ids" => ec2SecurityGroupIds, "environment" => environment, "group" => group, "hash4_ipsets" => hash4Ipsets, "hash4_iptables" => hash4Iptables, "hash6_ipsets" => hash6Ipsets, "hash6_iptables" => hash6Iptables, "hostkey" => hostKey, "interfaces" => interfacesNew, "ipset_hash" => ipsetHash, "location" => location, "name" => hostname, "os_distribution" => oS_Distribution, "os_version" => oS_Version, "provider" => provider, "updatetype" => updateType, "version" => version, "ec2_instance_tags" => ec2InstanceTags, "ec2_vpc_id" => ec2VpcId, "ec2_subnet_id" => ec2SubnetId})
     case(interfacesOld == interfacesNew) do

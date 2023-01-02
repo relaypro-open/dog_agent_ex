@@ -251,7 +251,7 @@ defmodule :dog_agent do
     hash4Iptables = :dog_iptables.create_hash(:dog_iptables.read_current_ipv4_iptables())
     hash6Iptables = :dog_iptables.create_hash(:dog_iptables.read_current_ipv6_iptables())
     ipsetHash = :dog_ipset.read_hash()
-    {:ok, version} = :dog_app.get_version()
+    {:ok, version} = :dog.get_version()
     updateType = :force
     {group, location, environment, hostkey} = case(:dog_config.read_config_file()) do
       {:ok, configMap} ->
