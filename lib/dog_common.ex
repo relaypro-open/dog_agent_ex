@@ -5,6 +5,7 @@
 
 defmodule :dog_common do
 
+  require Logger
 
 
   def to_list(item) when is_atom(item) do
@@ -111,7 +112,7 @@ defmodule :dog_common do
 
   defp rekey_map_of_maps(iterator, newKey, oldKeysNewKey, mapAcc) do
     {oldKey, oldValue, thisIterator} = iterator
-    :io.format('Iterator: ~p~n', [iterator])
+    Logger.debug('Iterator: #{iterator}')
     newKeyValue = :maps.get(newKey, oldValue)
     newMap0 = :maps.remove(newKey, oldValue)
     newMap1 = :maps.put(oldKeysNewKey, oldKey, newMap0)

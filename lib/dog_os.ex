@@ -4,6 +4,7 @@
 
 
 defmodule :dog_os do
+  require Logger
 
   # Begin included file: dog.hrl
 
@@ -31,21 +32,21 @@ defmodule :dog_os do
 
   defmacrop erlconst_RUNDIR() do
     quote do
-      '/etc/dog'
+      '/etc/dog_ex'
     end
   end
 
 
   defmacrop erlconst_CONFIG_FILE() do
     quote do
-      '/etc/dog/config.json'
+      '/etc/dog_ex/config.json'
     end
   end
 
 
   defmacrop erlconst_LOCAL_CONFIG_FILE() do
     quote do
-      '/etc/dog/local_config.json'
+      '/etc/dog_ex/local_config.json'
     end
   end
 

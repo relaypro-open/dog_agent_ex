@@ -1,5 +1,8 @@
 import Config
 
+config :logger, :console,
+    level: :debug
+
 config :dog,
   version: "local_docker",
   enforcing: true,
@@ -38,3 +41,7 @@ config :erlexec,
   #alarm: 5,  %% sec deadline for the port program to clean up child pids
   user: "root",
   limit_users: ["root"]
+
+#config :wobserver,
+#  mode: :standalone,
+#  remote_url_prefix: "/dog-agent-ex"

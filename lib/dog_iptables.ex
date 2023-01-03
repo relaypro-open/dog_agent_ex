@@ -4,10 +4,11 @@
 
 
 defmodule :dog_iptables do
+  require Logger
 
   defmacrop erlconst_RUNDIR() do
     quote do
-      '/etc/dog'
+      '/etc/dog_ex'
     end
   end
 
@@ -175,7 +176,7 @@ defmodule :dog_iptables do
                 :error
             end
           false ->
-            removeNatFile = '/etc/dog/rm-nat.txt'
+            removeNatFile = '/etc/dog_ex/rm-nat.txt'
             :file.write_file(removeNatFile, rm_nat())
             cmd = 'cat ' ++ trainerFilterFile ++ ' ' ++ removeNatFile ++ ' | ' ++ erlconst_IP4TABLES_RESTORE_COMMAND()
             result = :dog_os.cmd(cmd)
@@ -224,10 +225,10 @@ defmodule :dog_iptables do
         result = :dog_os.cmd(cmd)
         case(result) do
           [] ->
-            :io.format('applied ipv6 ruleset')
+            Logger.debug('applied ipv6 ruleset')
             :ok
           _ ->
-            :io.format('validate_ipv6_ruleset Result: ~p', [result])
+            Logger.debug('validate_ipv6_ruleset Result: #{result}')
             :error
         end
     end
@@ -328,7 +329,7 @@ defmodule :dog_iptables do
   defp backup_current_ipv4_iptables() do
     cmd = erlconst_IP4TABLES_SAVE_COMMAND() ++ ' > ' ++ erlconst_RUNDIR() ++ '/iptables.back'
     result = :dog_os.cmd(cmd)
-    :io.format('backup_ipv4_iptables Result: ~p', [result])
+    Logger.debug('backup_ipv4_iptables Result: #{result}')
     case(result) do
       [] ->
         :ok
@@ -344,7 +345,7 @@ defmodule :dog_iptables do
   defp backup_current_ipv6_iptables() do
     cmd = erlconst_IP6TABLES_SAVE_COMMAND() ++ ' > ' ++ erlconst_RUNDIR() ++ '/ip6tables.back'
     result = :dog_os.cmd(cmd)
-    :io.format('backup_ipv6_iptables Result: ~p', [result])
+    Logger.debug('backup_ipv6_iptables Result: #{result}')
     case(result) do
       [] ->
         :ok
@@ -377,10 +378,10 @@ defmodule :dog_iptables do
         case(retry) do
           r when r <= iptablesRestoreRetryLimit ->
             :timer.sleep(iptablesRestoreRetryWaitSeconds * 1000)
-            :io.format('Retry count updating IPv4 iptables: ~p', [r + 1])
+            Logger.debug('Retry count updating IPv4 iptables: #{r + 1}')
             update_iptables4(ruleset, r + 1)
           r when r > iptablesRestoreRetryLimit ->
-            :io.format('Unable to restore iptables after retry number: ~p', [r])
+            Logger.debug('Unable to restore iptables after retry number: #{r}')
         end
     end
   end
@@ -409,10 +410,10 @@ defmodule :dog_iptables do
         case(retry) do
           r when r <= iptablesRestoreRetryLimit ->
             :timer.sleep(iptablesRestoreRetryWaitSeconds * 1000)
-            :io.format('Retry count updating IPv6 iptables: ~p', [r + 1])
+            Logger.debug('Retry count updating IPv6 iptables: #{r + 1}')
             update_iptables6(ruleset, r + 1)
           r when r > iptablesRestoreRetryLimit ->
-            :io.format('Unable to restore iptables after retry number: ~p', [r])
+            Logger.debug('Unable to restore iptables after retry number: #{r}')
         end
     end
   end
@@ -459,28 +460,28 @@ defmodule :dog_iptables do
       false ->
         :pass
       _ ->
-        :io.format('R4IptablesRuleset: ~p', [r4IptablesRuleset])
+        Logger.debug('R4IptablesRuleset: #{r4IptablesRuleset}')
         :ok = write_ipv4_iptables_ruleset(r4IptablesRuleset)
     end
     case(r6IptablesRuleset) do
       false ->
         :pass
       _ ->
-        :io.format('R6IptablesRuleset: ~p', [r6IptablesRuleset])
+        Logger.debug('R6IptablesRuleset: #{r6IptablesRuleset}')
         :ok = write_ipv6_iptables_ruleset(r6IptablesRuleset)
     end
     case(:application.get_env(:dog, :use_ipsets, true)) do
       true ->
         case(r4IpsetsRuleset) do
           false ->
-            :io.format('No v4 ipset ruleset to apply')
+            Logger.debug('No v4 ipset ruleset to apply')
             :pass
           _ ->
             :ok = update_iptables4(r4IpsetsRuleset)
         end
         case(r6IpsetsRuleset) do
           false ->
-            :io.format('No v6 ipset ruleset to apply')
+            Logger.debug('No v6 ipset ruleset to apply')
             :pass
           _ ->
             :ok = update_iptables6(r6IpsetsRuleset)
@@ -488,14 +489,14 @@ defmodule :dog_iptables do
       false ->
         case(r4IptablesRuleset) do
           false ->
-            :io.format('No v4 iptables ruleset to apply')
+            Logger.debug('No v4 iptables ruleset to apply')
             :pass
           _ ->
             :ok = update_iptables4(r4IptablesRuleset)
         end
         case(r6IptablesRuleset) do
           false ->
-            :io.format('No v6 iptables ruleset to apply')
+            Logger.debug('No v6 iptables ruleset to apply')
             :pass
           _ ->
             :ok = update_iptables6(r6IptablesRuleset)

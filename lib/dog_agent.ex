@@ -6,6 +6,7 @@
 defmodule :dog_agent do
 
   @behaviour :gen_server
+  require Logger
 
   @spec start_link() :: {:ok, pid()} | :ignore | {:error, {:already_started, pid()} | term()}
 
@@ -47,7 +48,7 @@ defmodule :dog_agent do
       :gen_server.call(__MODULE__, :read_hash, 20000)
     catch
       class, reason ->
-        :io.format('Class, Reason: ~p, ~p', [class, reason])
+        Logger.debug('Class, Reason: #{class}, #{reason}')
         {class, reason}
     end
   end
@@ -61,7 +62,7 @@ defmodule :dog_agent do
       :gen_server.call(__MODULE__, {:create_ipsets, ipsets}, 20000)
     catch
       class, reason ->
-        :io.format('Class, Reason: ~p, ~p', [class, reason])
+        Logger.debug('Class, Reason: #{class}, #{reason}')
         {class, reason}
     end
   end

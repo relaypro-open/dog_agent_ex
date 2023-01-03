@@ -4,6 +4,7 @@
 
 
 defmodule :dog_string do
+  require Logger
 
   @spec split(char_list(), char_list()) :: list()
 

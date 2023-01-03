@@ -4,10 +4,11 @@
 
 
 defmodule :dog_config do
+  require Logger
 
   defmacrop erlconst_CONFIG_FILE() do
     quote do
-      '/etc/dog/config.json'
+      '/etc/dog_ex/config.json'
     end
   end
 

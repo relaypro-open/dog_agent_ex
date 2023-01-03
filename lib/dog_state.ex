@@ -6,6 +6,7 @@
 defmodule :dog_state do
 
   require Record
+  require Logger
 
   @typep ec2_availability_zone() :: char_list()
 

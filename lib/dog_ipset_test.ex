@@ -4,6 +4,7 @@
 
 
 defmodule :dog_ipset_test do
+  require Logger
 
   def tester() do
     ip_tester()
@@ -27,12 +28,12 @@ defmodule :dog_ipset_test do
 
 
   def read_tester() do
-    :lists.foreach(fn _x -> :io.format('~p~n', [:dog_ipset.read_hash()]) end, :lists.seq(1, 500))
+    :lists.foreach(fn _x -> Logger.debug('~p~n', [:dog_ipset.read_hash()]) end, :lists.seq(1, 500))
   end
 
 
   def write_tester() do
-    {:ok, ipset} = :file.read_file('/etc/dog/ipset.txt')
+    {:ok, ipset} = :file.read_file('/etc/dog_ex/ipset.txt')
     :lists.foreach(fn _x -> :dog_ipset.create_ipsets(ipset) end, :lists.seq(1, 500))
   end
 
@@ -41,15 +42,15 @@ defmodule :dog_ipset_test do
     :lists.foreach(fn _x ->
       ipset = :dog_ipset.read_current_ipset()
       :ok = :dog_ipset.create_ipsets(ipset)
-      :io.format('~p~n', [:dog_ipset.read_hash()])
+      Logger.debug('~p~n', [:dog_ipset.read_hash()])
     end, :lists.seq(1, 500))
   end
 
 
   def serial_cmd_tester() do
     :lists.foreach(fn _x ->
-      :io.format('~s~n', [:os.cmd('cat /etc/dog/ipset.txt | sudo /sbin/ipset restore -exist')])
-      :io.format('~s~n', [:os.cmd('sudo /sbin/ipset save | md5sum')])
+      Logger.debug('~s~n', [:os.cmd('cat /etc/dog_ex/ipset.txt | sudo /sbin/ipset restore -exist')])
+      Logger.debug('~s~n', [:os.cmd('sudo /sbin/ipset save | md5sum')])
     end, :lists.seq(1, 500))
   end
 

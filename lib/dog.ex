@@ -6,9 +6,11 @@
 defmodule :dog do
 
   @behaviour :application
+  require Logger
 
 
   def start(_startType, _startArgs) do
+    Logger.info("start")
     :dog_sup.start_link()
   end
 

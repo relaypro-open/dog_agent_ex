@@ -7,6 +7,7 @@ defmodule :dog_file_transfer do
 
   @defined_FILE_HRL_ System.get_env("DEFINE_FILE_HRL_") != nil
 
+  require Logger
   require Record
 
   @behaviour :gen_server
@@ -97,7 +98,7 @@ defmodule :dog_file_transfer do
               end
             catch
               exception, reason ->
-                :io.format('~p, ~p', [exception, reason])
+                Logger.debug('#{exception}, #{reason}')
                 {:ack, reason}
             else
               {:ack, newState} ->
@@ -130,7 +131,7 @@ defmodule :dog_file_transfer do
               end
             catch
               exception, reason ->
-                :io.format('~p, ~p', [exception, reason])
+                Logger.debug('#{exception}, #{reason}')
                 {:reply, "text/json", :jsx.encode([reason]), state}
             else
               reply ->
@@ -146,7 +147,7 @@ defmodule :dog_file_transfer do
               end
             catch
               exception, reason ->
-                :io.format('~p, ~p', [exception, reason])
+                Logger.debug('#{exception}, #{reason}')
                 {:reply, "text/json", :jsx.encode([reason]), state}
             else
               reply ->
@@ -185,7 +186,7 @@ defmodule :dog_file_transfer do
               end
             catch
               exception, reason ->
-                :io.format('~p, ~p', [exception, reason])
+                Logger.debug('#{exception}, #{reason}')
                 {:reply, "text/json", :jsx.encode(error: reason), state}
             else
               reply ->

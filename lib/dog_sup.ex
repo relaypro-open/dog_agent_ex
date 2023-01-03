@@ -6,6 +6,7 @@
 defmodule :dog_sup do
 
   @behaviour :supervisor
+  require Logger
 
 
   defmacrop erlconst_SERVER() do

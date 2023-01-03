@@ -5,6 +5,7 @@
 
 defmodule :dog_ips do
 
+  require Logger
   @spec do_get_group_routing_key(:dog_state.dog_state()) :: {:ok, binary()}
 
 
@@ -48,7 +49,7 @@ defmodule :dog_ips do
     stateNew = :dog_state.from_map(%{"ec2_region" => ec2Region, "ec2_availability_zone" => ec2AvailabilityZone, "ec2_instance_id" => ec2InstanceId, "ec2_owner_id" => ec2OwnerId, "ec2_security_group_ids" => ec2SecurityGroupIds, "environment" => environment, "group" => group, "hash4_ipsets" => hash4Ipsets, "hash4_iptables" => hash4Iptables, "hash6_ipsets" => hash6Ipsets, "hash6_iptables" => hash6Iptables, "hostkey" => hostKey, "interfaces" => interfacesNew, "ipset_hash" => ipsetHash, "location" => location, "name" => hostname, "os_distribution" => oS_Distribution, "os_version" => oS_Version, "provider" => provider, "updatetype" => updateType, "version" => version, "ec2_instance_tags" => ec2InstanceTags, "ec2_vpc_id" => ec2VpcId, "ec2_subnet_id" => ec2SubnetId})
     case(interfacesOld == interfacesNew) do
       false ->
-        :io.format('HostnameOld, InterfacesOld: ~p, ~p', [hostnameOld, interfacesOld])
+        Logger.debug('HostnameOld, InterfacesOld: #{hostnameOld}, #{interfacesOld}')
       true ->
         :ok
     end

@@ -4,10 +4,11 @@
 
 
 defmodule :dog_ipset do
+  require Logger
 
   defmacrop erlconst_RUNDIR() do
     quote do
-      '/etc/dog'
+      '/etc/dog_ex'
     end
   end
 
@@ -19,10 +20,10 @@ defmodule :dog_ipset do
     :ok = write_temp_file(ipsetConf)
     case(restore_ipset()) do
       :ok ->
-        :io.format('Successfully restored ipset')
+        Logger.debug('Successfully restored ipset')
         :ok
       {:error, [{_restoreError, _restoreCode}, {:stderr, _cmdError}]} ->
-        :io.format('Error restoring ipset')
+        Logger.debug('Error restoring ipset')
     end
     :ok = persist_ipset()
     cleanup_ipset()
@@ -39,10 +40,10 @@ defmodule :dog_ipset do
     :file.close(tmpFile)
     case(result) do
       :ok ->
-        :io.format('wrote ipset.txt')
+        Logger.debug('wrote ipset.txt')
         :ok
       {:error, error} ->
-        :io.format('error: ~p', [error])
+        Logger.debug('error: #{error}')
         {:error, error}
     end
   end
@@ -159,9 +160,9 @@ defmodule :dog_ipset do
 
 
   def cleanup_ipset() do
-    _one = :dog_os.cmd('grep create /etc/dog/ipset.txt | awk \'{print $2}\' | sort | uniq > /etc/dog/1.tmp')
-    _two = :dog_os.cmd('/home/dog/bin/ipset list -name | sort | uniq > /etc/dog/2.tmp')
-    cmd = 'for name in `comm -1 -3 /etc/dog/1.tmp /etc/dog/2.tmp`;do echo destroy $name;done > /etc/dog/ipset_cleanup.txt; cat /etc/dog/ipset_cleanup.txt | /home/dog/bin/ipset restore; rm /etc/dog/1.tmp /etc/dog/2.tmp'
+    _one = :dog_os.cmd('grep create /etc/dog_ex/ipset.txt | awk \'{print $2}\' | sort | uniq > /etc/dog_ex/1.tmp')
+    _two = :dog_os.cmd('/home/dog/bin/ipset list -name | sort | uniq > /etc/dog_ex/2.tmp')
+    cmd = 'for name in `comm -1 -3 /etc/dog_ex/1.tmp /etc/dog_ex/2.tmp`;do echo destroy $name;done > /etc/dog_ex/ipset_cleanup.txt; cat /etc/dog_ex/ipset_cleanup.txt | /home/dog/bin/ipset restore; rm /etc/dog_ex/1.tmp /etc/dog_ex/2.tmp'
     case(:dog_os.cmd(cmd)) do
       [] ->
         :ok

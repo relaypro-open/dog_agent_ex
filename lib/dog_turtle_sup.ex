@@ -6,6 +6,7 @@
 defmodule :dog_turtle_sup do
   require Record
   require AMQPCore
+  require Logger
 
   defmacrop erlconst_SERVER() do
     quote do

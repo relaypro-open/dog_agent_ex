@@ -4,6 +4,7 @@
 
 
 defmodule :dog_interfaces do
+  require Logger
 
   defmacrop erlconst_IPsExchange() do
     quote do

@@ -34,18 +34,22 @@ defmodule DogAgentEx.MixProject do
     {:base16, git: "https://github.com/goj/base16.git", tag: "1.0.0"},
     {:bbmustache, "1.11.0"},
     {:erldocker, git: "https://github.com/Phonebooth/erldocker.git", branch: "feature/remove_lager"},
+    {:erlexec, git: "https://github.com/saleyn/erlexec.git", branch: "master"},
+    {:erlsh, git: "https://github.com/proger/erlsh.git", tag: "2", override: true},
+    {:exometer_core, git: "https://github.com/fkrause98/exometer_core.git", override: true},
     {:flatlog, git: "https://github.com/ferd/flatlog.git", tag: "v0.1.2"},
     {:hackney, git: "https://github.com/benoitc/hackney.git", tag: "1.18.1", override: true},
     {:jsn, "2.1.4"},
     {:jsx, git: "https://github.com/talentdeficit/jsx.git", tag: "v2.8.3", override: true},
     {:logger_file_backend, "~> 0.0.11"},
+    {:observer_cli, "~> 1.7"},
     {:parse_trans, "3.4.1", override: true},
     #{:remix, "~> 0.0.1", only: :dev},
     {:turtle, git: "https://github.com/relaypro-open/turtle.git", branch: "feature/remove_lager"},
     {:uuid, ">=0.0.0", hex: "uuid_erl"},
-    {:exometer_core, git: "https://github.com/fkrause98/exometer_core.git", override: true},
-    {:erlsh, git: "https://github.com/proger/erlsh.git", tag: "2", override: true},
-    {:erlexec, git: "https://github.com/saleyn/erlexec.git", branch: "master"}
+    #{:wobserver, "~> 0.1.8"}, #doesn't work w/erlang 24, also can't pull from github
+    #{:plug_cowboy, "~> 1.0"},
+    #{:plug_crypto, "~> 1.2"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]

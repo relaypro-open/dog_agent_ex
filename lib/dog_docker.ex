@@ -4,6 +4,7 @@
 
 
 defmodule :dog_docker do
+  require Logger
 
   @spec is_docker_instance() :: boolean()
 

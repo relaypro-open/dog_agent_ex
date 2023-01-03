@@ -6,6 +6,7 @@
 defmodule :dog_iptables_agent do
 
   @behaviour :gen_server
+  require Logger
 
 
   defmacrop erlconst_SERVER() do
@@ -45,13 +46,13 @@ defmodule :dog_iptables_agent do
   end
 
   def handle_cast(msg, state) do
-    :io.format('unknown_message: Msg: ~p, State: ~p', [msg, state])
+    Logger.debug('unknown_message: Msg: #{msg}, State: #{state}')
     {:noreply, state}
   end
 
 
   def handle_info(info, state) do
-    :io.format('unknown_message: Info: ~p, State: ~p', [info, state])
+    Logger.debug('unknown_message: Info: #{info}, State: #{state}')
     {:noreply, state}
   end
 
@@ -60,7 +61,7 @@ defmodule :dog_iptables_agent do
 
 
   def terminate(reason, state) do
-    :io.format('terminate: Reason: ~p, State: ~p', [reason, state])
+    Logger.debug('terminate: Reason: #{reason}, State: #{state}')
     {:close}
   end
 

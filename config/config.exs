@@ -30,13 +30,12 @@ import Config
 #     import_config "#Mix.env().exs"
 #
 
-config :dog,
-  version: "7342b0908e4dbf8daf70ccf3f18422c7d654c504",
-  enforcing: true,
-  use_ipsets: true
-
 config :logger,
-  backends: [{LoggerFileBackend, :info}, {LoggerFileBackend, :error}]
+  backends: [
+    {LoggerFileBackend, :info}, 
+    {LoggerFileBackend, :error},
+    {LoggerFileBackend, :debug}
+  ]
 
 config :logger, :info,
   path: "/var/log/dog_ex/console.log",
@@ -45,5 +44,9 @@ config :logger, :info,
 config :logger, :error,
   path: "/var/log/dog_ex/error.log",
   level: :error
+
+config :logger, :debug,
+  path: "/var/log/dog_ex/debug.log",
+  level: :debug
 
 import_config "#{Mix.env()}.exs"
