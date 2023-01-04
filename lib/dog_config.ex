@@ -5,13 +5,7 @@
 
 defmodule :dog_config do
   require Logger
-
-  defmacrop erlconst_CONFIG_FILE() do
-    quote do
-      '/etc/dog_ex/config.json'
-    end
-  end
-
+  alias DogMacros, as: M
 
   @spec do_init_config() :: atom()
 
@@ -62,7 +56,7 @@ defmodule :dog_config do
 
   def write_config_file(var_group, var_location, var_environment, var_hostkey) do
     configMap = %{group: var_group, location: var_location, environment: var_environment, hostkey: var_hostkey}
-    :ok = :file.write_file(erlconst_CONFIG_FILE(), :jsx.encode(configMap))
+    :ok = :file.write_file(M.erlconst_CONFIG_FILE(), :jsx.encode(configMap))
     :ok
   end
 
@@ -71,7 +65,7 @@ defmodule :dog_config do
 
 
   def read_config_file() do
-    case(:file.read_file(erlconst_CONFIG_FILE())) do
+    case(:file.read_file(M.erlconst_CONFIG_FILE())) do
       {:ok, configJson} ->
         {:ok, :jsx.decode(configJson, [:return_maps])}
       _ ->

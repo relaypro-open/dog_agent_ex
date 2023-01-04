@@ -5,12 +5,7 @@
 
 defmodule :dog_ipset do
   require Logger
-
-  defmacrop erlconst_RUNDIR() do
-    quote do
-      '/etc/dog_ex'
-    end
-  end
+  alias DogMacros, as: M
 
 
   @spec create_ipsets(iolist()) :: :ok
@@ -35,7 +30,7 @@ defmodule :dog_ipset do
 
 
   defp write_temp_file(ipsetConf) do
-    {:ok, tmpFile} = :file.open(erlconst_RUNDIR() ++ '/ipset.txt', [:write])
+    {:ok, tmpFile} = :file.open(M.erlconst_RUNDIR() ++ '/ipset.txt', [:write])
     result = :file.write(tmpFile, ipsetConf)
     :file.close(tmpFile)
     case(result) do
@@ -64,7 +59,7 @@ defmodule :dog_ipset do
     ipsetRestoreRetryLimit = :application.get_env(:dog, :ipset_restore_retry_limit, 2)
     ipsetRestoreRetryWaitSeconds = :application.get_env(:dog, :ipset_restore_retry_wait_seconds, 2)
     ipsetRestoreWaitSeconds = :application.get_env(:dog, :ipset_restore_wait_seconds, 3)
-    restoreCmd = 'cat ' ++ erlconst_RUNDIR() ++ '/ipset.txt | /home/dog/bin/ipset restore -exist'
+    restoreCmd = 'cat ' ++ M.erlconst_RUNDIR() ++ '/ipset.txt | /home/dog/bin/ipset restore -exist'
     result = :dog_os.cmd(restoreCmd)
     :timer.sleep(ipsetRestoreWaitSeconds * 1000)
     case(result) do

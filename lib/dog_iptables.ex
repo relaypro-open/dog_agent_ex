@@ -5,51 +5,18 @@
 
 defmodule :dog_iptables do
   require Logger
-
-  defmacrop erlconst_RUNDIR() do
-    quote do
-      '/etc/dog_ex'
-    end
-  end
-
-
-  defmacrop erlconst_IP4TABLES_SAVE_COMMAND() do
-    quote do
-      'echo "`/home/dog/bin/iptables-save -t filter`"'
-    end
-  end
-
-
-  defmacrop erlconst_IP6TABLES_SAVE_COMMAND() do
-    quote do
-      'echo "`/home/dog/bin/ip6tables-save -t filter`"'
-    end
-  end
-
-
-  defmacrop erlconst_IP4TABLES_RESTORE_COMMAND() do
-    quote do
-      '/home/dog/bin/iptables-restore'
-    end
-  end
-
-
-  defmacrop erlconst_IP6TABLES_RESTORE_COMMAND() do
-    quote do
-      '/home/dog/bin/ip6tables-restore'
-    end
-  end
+  alias DogMacros, as: M
 
 
   defp write_ipv4_docker_nat_ruleset(ruleset) do
-    tempfile = erlconst_RUNDIR() ++ '/iptables-docker-nat.txt'
+    tempfile = M.erlconst_RUNDIR() ++ '/iptables-docker-nat.txt'
     :ok = :file.write_file(tempfile, ruleset)
     {:ok, tempfile}
   end
 
 
   defp write_ipv4_docker_filter_ruleset(ruleset) do
-    tempfile = erlconst_RUNDIR() ++ '/iptables-docker-filter.txt'
+    tempfile = M.erlconst_RUNDIR() ++ '/iptables-docker-filter.txt'
     :ok = :file.write_file(tempfile, ruleset)
     {:ok, tempfile}
   end
@@ -59,7 +26,7 @@ defmodule :dog_iptables do
 
 
   def write_ipv4_ruleset(ruleset) do
-    tempfile = erlconst_RUNDIR() ++ '/iptables.txt'
+    tempfile = M.erlconst_RUNDIR() ++ '/iptables.txt'
     :ok = :file.write_file(tempfile, ruleset)
     {:ok, tempfile}
   end
@@ -69,7 +36,7 @@ defmodule :dog_iptables do
 
 
   def write_ipv6_ruleset(ruleset) do
-    tempfile = erlconst_RUNDIR() ++ '/ip6tables.txt'
+    tempfile = M.erlconst_RUNDIR() ++ '/ip6tables.txt'
     :ok = :file.write_file(tempfile, ruleset)
     {:ok, tempfile}
   end
@@ -79,7 +46,7 @@ defmodule :dog_iptables do
 
 
   defp write_ipv4_iptables_ruleset(ruleset) do
-    tempfile = erlconst_RUNDIR() ++ '/ip4tables_iptables.txt'
+    tempfile = M.erlconst_RUNDIR() ++ '/ip4tables_iptables.txt'
     :ok = :file.write_file(tempfile, ruleset)
     :ok
   end
@@ -89,7 +56,7 @@ defmodule :dog_iptables do
 
 
   defp write_ipv6_iptables_ruleset(ruleset) do
-    tempfile = erlconst_RUNDIR() ++ '/ip6tables_iptables.txt'
+    tempfile = M.erlconst_RUNDIR() ++ '/ip6tables_iptables.txt'
     :ok = :file.write_file(tempfile, ruleset)
     :ok
   end
@@ -99,7 +66,7 @@ defmodule :dog_iptables do
 
 
   defp write_ipv4_ipsets_ruleset(ruleset) do
-    tempfile = erlconst_RUNDIR() ++ '/ip4tables_ipsets.txt'
+    tempfile = M.erlconst_RUNDIR() ++ '/ip4tables_ipsets.txt'
     :ok = :file.write_file(tempfile, ruleset)
     :ok
   end
@@ -109,7 +76,7 @@ defmodule :dog_iptables do
 
 
   defp write_ipv6_ipsets_ruleset(ruleset) do
-    tempfile = erlconst_RUNDIR() ++ '/ip6tables_ipsets.txt'
+    tempfile = M.erlconst_RUNDIR() ++ '/ip6tables_ipsets.txt'
     :ok = :file.write_file(tempfile, ruleset)
     :ok
   end
@@ -122,9 +89,9 @@ defmodule :dog_iptables do
     enforcing = :application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
-        erlconst_IP4TABLES_SAVE_COMMAND() ++ ' > ' ++ erlconst_RUNDIR() ++ '/rules.v4'
+        M.erlconst_IP4TABLES_SAVE_COMMAND() ++ ' > ' ++ M.erlconst_RUNDIR() ++ '/rules.v4'
       true ->
-        erlconst_IP4TABLES_SAVE_COMMAND() ++ ' > /etc/iptables/rules.v4'
+        M.erlconst_IP4TABLES_SAVE_COMMAND() ++ ' > /etc/iptables/rules.v4'
     end
     result = :dog_os.cmd(cmd)
     case(result) do
@@ -160,14 +127,14 @@ defmodule :dog_iptables do
             write_ipv4_docker_filter_ruleset(dockerFilterRuleset)
             {:ok, trainerFilter} = :file.read_file(trainerFilterFile)
             trainerFilterWithoutCommit = :string.join(:lists.subtract(:dog_string.split(:erlang.binary_to_list(trainerFilter), '\n', :all), ['COMMIT']), '\n')
-            dockerTrainerFilterFile = erlconst_RUNDIR() ++ '/iptables-docker-trainer-filter.txt'
+            dockerTrainerFilterFile = M.erlconst_RUNDIR() ++ '/iptables-docker-trainer-filter.txt'
             :file.write_file(dockerTrainerFilterFile, trainerFilterWithoutCommit)
-            dockerNatFile = erlconst_RUNDIR() ++ '/iptables-docker-nat.txt'
-            dockerFilterFile = erlconst_RUNDIR() ++ '/iptables-docker-filter.txt'
-            dockerIptablesFile = erlconst_RUNDIR() ++ '/iptables-docker.txt'
+            dockerNatFile = M.erlconst_RUNDIR() ++ '/iptables-docker-nat.txt'
+            dockerFilterFile = M.erlconst_RUNDIR() ++ '/iptables-docker-filter.txt'
+            dockerIptablesFile = M.erlconst_RUNDIR() ++ '/iptables-docker.txt'
             concatCmd = 'cat ' ++ dockerTrainerFilterFile ++ ' ' ++ dockerFilterFile ++ ' ' ++ dockerNatFile ++ ' > ' ++ dockerIptablesFile
             :dog_os.cmd(concatCmd)
-            cmd = erlconst_IP4TABLES_RESTORE_COMMAND() ++ ' ' ++ dockerIptablesFile
+            cmd = M.erlconst_IP4TABLES_RESTORE_COMMAND() ++ ' ' ++ dockerIptablesFile
             result = :dog_os.cmd(cmd)
             case(result) do
               [] ->
@@ -178,7 +145,7 @@ defmodule :dog_iptables do
           false ->
             removeNatFile = '/etc/dog_ex/rm-nat.txt'
             :file.write_file(removeNatFile, rm_nat())
-            cmd = 'cat ' ++ trainerFilterFile ++ ' ' ++ removeNatFile ++ ' | ' ++ erlconst_IP4TABLES_RESTORE_COMMAND()
+            cmd = 'cat ' ++ trainerFilterFile ++ ' ' ++ removeNatFile ++ ' | ' ++ M.erlconst_IP4TABLES_RESTORE_COMMAND()
             result = :dog_os.cmd(cmd)
             case(result) do
               [] ->
@@ -198,9 +165,9 @@ defmodule :dog_iptables do
     enforcing = :application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
-        erlconst_IP6TABLES_SAVE_COMMAND() ++ ' > ' ++ erlconst_RUNDIR() ++ '/rules.v6'
+        M.erlconst_IP6TABLES_SAVE_COMMAND() ++ ' > ' ++ M.erlconst_RUNDIR() ++ '/rules.v6'
       true ->
-        erlconst_IP6TABLES_SAVE_COMMAND() ++ ' > /etc/iptables/rules.v6'
+        M.erlconst_IP6TABLES_SAVE_COMMAND() ++ ' > /etc/iptables/rules.v6'
     end
     result = :dog_os.cmd(cmd)
     case(result) do
@@ -221,7 +188,7 @@ defmodule :dog_iptables do
       false ->
         :ok
       true ->
-        cmd = erlconst_IP6TABLES_RESTORE_COMMAND() ++ ' ' ++ tempFile
+        cmd = M.erlconst_IP6TABLES_RESTORE_COMMAND() ++ ' ' ++ tempFile
         result = :dog_os.cmd(cmd)
         case(result) do
           [] ->
@@ -243,13 +210,13 @@ defmodule :dog_iptables do
     enforcing = :application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
-        'cat ' ++ erlconst_RUNDIR() ++ '/ip4tables_iptables.txt'
+        'cat ' ++ M.erlconst_RUNDIR() ++ '/ip4tables_iptables.txt'
       true ->
         case(useIpsets) do
           false ->
-            erlconst_IP4TABLES_SAVE_COMMAND()
+            M.erlconst_IP4TABLES_SAVE_COMMAND()
           true ->
-            'cat ' ++ erlconst_RUNDIR() ++ '/ip4tables_iptables.txt'
+            'cat ' ++ M.erlconst_RUNDIR() ++ '/ip4tables_iptables.txt'
         end
     end
     result = :dog_os.cmd(cmd)
@@ -265,13 +232,13 @@ defmodule :dog_iptables do
     enforcing = :application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
-        'cat ' ++ erlconst_RUNDIR() ++ '/ip6tables_iptables.txt'
+        'cat ' ++ M.erlconst_RUNDIR() ++ '/ip6tables_iptables.txt'
       true ->
         case(useIpsets) do
           false ->
-            erlconst_IP6TABLES_SAVE_COMMAND()
+            M.erlconst_IP6TABLES_SAVE_COMMAND()
           true ->
-            'cat ' ++ erlconst_RUNDIR() ++ '/ip6tables_iptables.txt'
+            'cat ' ++ M.erlconst_RUNDIR() ++ '/ip6tables_iptables.txt'
         end
     end
     result = :dog_os.cmd(cmd)
@@ -287,13 +254,13 @@ defmodule :dog_iptables do
     enforcing = :application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
-        'cat ' ++ erlconst_RUNDIR() ++ '/ip4tables_ipsets.txt'
+        'cat ' ++ M.erlconst_RUNDIR() ++ '/ip4tables_ipsets.txt'
       true ->
         case(useIpsets) do
           false ->
-            'cat ' ++ erlconst_RUNDIR() ++ '/ip4tables_ipsets.txt'
+            'cat ' ++ M.erlconst_RUNDIR() ++ '/ip4tables_ipsets.txt'
           true ->
-            erlconst_IP4TABLES_SAVE_COMMAND()
+            M.erlconst_IP4TABLES_SAVE_COMMAND()
         end
     end
     result = :dog_os.cmd(cmd)
@@ -309,13 +276,13 @@ defmodule :dog_iptables do
     enforcing = :application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
-        'cat ' ++ erlconst_RUNDIR() ++ '/ip6tables_ipsets.txt'
+        'cat ' ++ M.erlconst_RUNDIR() ++ '/ip6tables_ipsets.txt'
       true ->
         case(useIpsets) do
           false ->
-            'cat ' ++ erlconst_RUNDIR() ++ '/ip6tables_ipsets.txt'
+            'cat ' ++ M.erlconst_RUNDIR() ++ '/ip6tables_ipsets.txt'
           true ->
-            erlconst_IP6TABLES_SAVE_COMMAND()
+            M.erlconst_IP6TABLES_SAVE_COMMAND()
         end
     end
     result = :dog_os.cmd(cmd)
@@ -327,7 +294,7 @@ defmodule :dog_iptables do
 
 
   defp backup_current_ipv4_iptables() do
-    cmd = erlconst_IP4TABLES_SAVE_COMMAND() ++ ' > ' ++ erlconst_RUNDIR() ++ '/iptables.back'
+    cmd = M.erlconst_IP4TABLES_SAVE_COMMAND() ++ ' > ' ++ M.erlconst_RUNDIR() ++ '/iptables.back'
     result = :dog_os.cmd(cmd)
     Logger.debug('backup_ipv4_iptables Result: #{result}')
     case(result) do
@@ -343,7 +310,7 @@ defmodule :dog_iptables do
 
 
   defp backup_current_ipv6_iptables() do
-    cmd = erlconst_IP6TABLES_SAVE_COMMAND() ++ ' > ' ++ erlconst_RUNDIR() ++ '/ip6tables.back'
+    cmd = M.erlconst_IP6TABLES_SAVE_COMMAND() ++ ' > ' ++ M.erlconst_RUNDIR() ++ '/ip6tables.back'
     result = :dog_os.cmd(cmd)
     Logger.debug('backup_ipv6_iptables Result: #{result}')
     case(result) do

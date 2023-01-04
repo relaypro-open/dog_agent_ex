@@ -9,6 +9,7 @@ defmodule :dog_file_transfer do
 
   require Logger
   require Record
+  alias DogMacros, as: M
 
   @behaviour :gen_server
 
@@ -40,12 +41,6 @@ defmodule :dog_file_transfer do
   # End included file: include/file.hrl from library kernel
 
 
-  defmacrop erlconst_SANDBOX_FILE_ROOT() do
-    quote do
-      '/'
-    end
-  end
-
 
   def subscriber_loop(_routingKey, _cType, payload, state) do
     message = :erlang.binary_to_term(payload)
@@ -61,7 +56,7 @@ defmodule :dog_file_transfer do
           :send_file ->
             try do
               filenameClean = :filelib.safe_relative_path(:string.trim(filename, :leading, '/'), [])
-              filePath = erlconst_SANDBOX_FILE_ROOT() ++ filenameClean
+              filePath = M.erlconst_SANDBOX_FILE_ROOT() ++ filenameClean
               case(filenameClean) do
                 :unsafe ->
                   {:reply, "text/json", :jsx.encode(:file_bad), state}
@@ -107,7 +102,7 @@ defmodule :dog_file_transfer do
           :delete_file ->
             try do
               filenameClean = :filelib.safe_relative_path(:string.trim(filename, :leading, '/'), [])
-              filePath = erlconst_SANDBOX_FILE_ROOT() ++ filenameClean
+              filePath = M.erlconst_SANDBOX_FILE_ROOT() ++ filenameClean
               case(filenameClean) do
                 :unsafe ->
                   {:reply, "text/json", :jsx.encode(:file_bad), state}

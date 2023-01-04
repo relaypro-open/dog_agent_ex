@@ -7,13 +7,7 @@ defmodule :dog_iptables_agent do
 
   @behaviour :gen_server
   require Logger
-
-
-  defmacrop erlconst_SERVER() do
-    quote do
-      __MODULE__
-    end
-  end
+  alias DogMacros, as: M
 
 
   def init(_args) do
@@ -26,7 +20,7 @@ defmodule :dog_iptables_agent do
 
 
   def start_link() do
-    :gen_server.start_link({:local, erlconst_SERVER()}, __MODULE__, [], [])
+    :gen_server.start_link({:local, M.erlconst_SERVER()}, __MODULE__, [], [])
   end
 
 

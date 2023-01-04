@@ -7,13 +7,7 @@ defmodule :dog_turtle_sup do
   require Record
   require AMQPCore
   require Logger
-
-  defmacrop erlconst_SERVER() do
-    quote do
-      __MODULE__
-    end
-  end
-
+  alias DogMacros, as: M
 
   @behaviour :supervisor
 
@@ -21,7 +15,7 @@ defmodule :dog_turtle_sup do
 
 
   def start_link() do
-    :supervisor.start_link({:local, erlconst_SERVER()}, __MODULE__, [])
+    :supervisor.start_link({:local, M.erlconst_SERVER()}, __MODULE__, [])
   end
 
 

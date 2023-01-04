@@ -5,26 +5,7 @@
 
 defmodule :dog_interfaces do
   require Logger
-
-  defmacrop erlconst_IPsExchange() do
-    quote do
-      "ips"
-    end
-  end
-
-
-  defmacrop erlconst_EC2_METADATA_BASE_URL() do
-    quote do
-      'http://169.254.169.254'
-    end
-  end
-
-
-  defmacrop erlconst_IBM_METADATA_BASE_URL() do
-    quote do
-      'https://api.service.softlayer.com'
-    end
-  end
+  alias DogMacros, as: M
 
 
   @spec get_provider() :: binary()
@@ -50,7 +31,7 @@ defmodule :dog_interfaces do
 
 
   def is_softlayer_instance() do
-    url = erlconst_IBM_METADATA_BASE_URL() ++ '/rest/v3/SoftLayer_Resource_Metadata/getPrimaryIpAddress'
+    url = M.erlconst_IBM_METADATA_BASE_URL() ++ '/rest/v3/SoftLayer_Resource_Metadata/getPrimaryIpAddress'
     method = :get
     headers = []
     payload = <<>>
@@ -84,7 +65,7 @@ defmodule :dog_interfaces do
       {:ok, boolean} ->
         boolean
       _ ->
-        url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/'
+        url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/'
         method = :get
         headers = [{"Content-Type", "text/plain"}]
         payload = <<>>
@@ -212,7 +193,7 @@ defmodule :dog_interfaces do
 
 
   def ec2_availability_zone() do
-    url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/placement/availability-zone'
+    url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/placement/availability-zone'
     method = :get
     headers = [{"Content-Type", "text/plain"}]
     payload = <<>>
@@ -236,7 +217,7 @@ defmodule :dog_interfaces do
 
 
   def ec2_instance_id() do
-    url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/instance-id'
+    url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/instance-id'
     method = :get
     headers = [{"Content-Type", "text/plain"}]
     payload = <<>>
@@ -279,7 +260,7 @@ defmodule :dog_interfaces do
 
 
   defp ec2_security_group_ids(mac) do
-    url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/' ++ mac ++ '/security-group-ids'
+    url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/' ++ mac ++ '/security-group-ids'
     method = :get
     headers = [{"Content-Type", "text/plain"}]
     payload = <<>>
@@ -324,7 +305,7 @@ defmodule :dog_interfaces do
 
 
   defp ec2_owner_id(mac) do
-    url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/' ++ mac ++ '/owner-id'
+    url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/' ++ mac ++ '/owner-id'
     method = :get
     headers = [{"Content-Type", "text/plain"}]
     payload = <<>>
@@ -369,7 +350,7 @@ defmodule :dog_interfaces do
 
 
   defp ec2_subnet_id(mac) do
-    url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/' ++ mac ++ '/subnet-id'
+    url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/' ++ mac ++ '/subnet-id'
     method = :get
     headers = [{"Content-Type", "text/plain"}]
     payload = <<>>
@@ -414,7 +395,7 @@ defmodule :dog_interfaces do
 
 
   defp ec2_vpc_id(mac) do
-    url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/' ++ mac ++ '/vpc-id'
+    url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/' ++ mac ++ '/vpc-id'
     method = :get
     headers = [{"Content-Type", "text/plain"}]
     payload = <<>>
@@ -440,7 +421,7 @@ defmodule :dog_interfaces do
 
 
   defp ec2_public_ipv4(mac) do
-    url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/' ++ mac ++ '/public-ipv4s'
+    url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/' ++ mac ++ '/public-ipv4s'
     method = :get
     headers = [{"Content-Type", "text/plain"}]
     payload = <<>>
@@ -466,7 +447,7 @@ defmodule :dog_interfaces do
 
 
   def ec2_macs() do
-    url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/'
+    url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/network/interfaces/macs/'
     method = :get
     headers = [{"Content-Type", "text/plain"}]
     payload = <<>>
@@ -613,7 +594,7 @@ defmodule :dog_interfaces do
     brokerRoutingKey = "ips"
     pid = :erlang.self()
     message = :erlang.term_to_binary(count: count, local_time: :calendar.local_time(), pid: pid, user_data: userData)
-    response = :turtle.publish(:ips_publisher, erlconst_IPsExchange(), brokerRoutingKey, "text/json", message, %{delivery_mode: :persistent})
+    response = :turtle.publish(:ips_publisher, M.erlconst_IPsExchange(), brokerRoutingKey, "text/json", message, %{delivery_mode: :persistent})
     response
   end
 
@@ -638,7 +619,7 @@ defmodule :dog_interfaces do
 
 
   def ec2_instance_tag(tag) do
-    url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/tags/instance/' ++ tag
+    url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/tags/instance/' ++ tag
     method = :get
     headers = [{"Content-Type", "text/plain"}]
     payload = <<>>
@@ -660,7 +641,7 @@ defmodule :dog_interfaces do
 
 
   def ec2_instance_tags() do
-    url = erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/tags/instance/'
+    url = M.erlconst_EC2_METADATA_BASE_URL() ++ '/latest/meta-data/tags/instance/'
     method = :get
     headers = [{"Content-Type", "text/plain"}]
     payload = <<>>
