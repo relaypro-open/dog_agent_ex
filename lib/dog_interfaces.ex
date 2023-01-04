@@ -5,6 +5,7 @@
 
 defmodule :dog_interfaces do
   require Logger
+  require DogMacros
   alias DogMacros, as: M
 
 
@@ -117,7 +118,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_info() :: {char_list(), char_list(), char_list(), char_list(), char_list(), map(), char_list(), char_list()}
+  @spec ec2_info() :: {charlist(), charlist(), charlist(), charlist(), charlist(), map(), charlist(), charlist()}
 
 
   def ec2_info() do
@@ -176,7 +177,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_region() :: char_list()
+  @spec ec2_region() :: charlist()
 
 
   def ec2_region() do
@@ -189,7 +190,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_availability_zone() :: char_list()
+  @spec ec2_availability_zone() :: charlist()
 
 
   def ec2_availability_zone() do
@@ -213,7 +214,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_instance_id() :: char_list()
+  @spec ec2_instance_id() :: charlist()
 
 
   def ec2_instance_id() do
@@ -256,7 +257,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_security_group_ids(char_list()) :: list() | []
+  @spec ec2_security_group_ids(charlist()) :: list() | []
 
 
   defp ec2_security_group_ids(mac) do
@@ -282,7 +283,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_owner_id() :: char_list()
+  @spec ec2_owner_id() :: charlist()
 
 
   def ec2_owner_id() do
@@ -301,7 +302,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_owner_id(char_list()) :: char_list()
+  @spec ec2_owner_id(charlist()) :: charlist()
 
 
   defp ec2_owner_id(mac) do
@@ -327,7 +328,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_subnet_id() :: char_list()
+  @spec ec2_subnet_id() :: charlist()
 
 
   def ec2_subnet_id() do
@@ -346,7 +347,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_subnet_id(char_list()) :: char_list()
+  @spec ec2_subnet_id(charlist()) :: charlist()
 
 
   defp ec2_subnet_id(mac) do
@@ -372,7 +373,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_vpc_id() :: char_list()
+  @spec ec2_vpc_id() :: charlist()
 
 
   def ec2_vpc_id() do
@@ -391,7 +392,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_vpc_id(char_list()) :: char_list()
+  @spec ec2_vpc_id(charlist()) :: charlist()
 
 
   defp ec2_vpc_id(mac) do
@@ -417,7 +418,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_public_ipv4(char_list()) :: list() | {:error, atom() | integer()}
+  @spec ec2_public_ipv4(charlist()) :: list() | {:error, atom() | integer()}
 
 
   defp ec2_public_ipv4(mac) do
@@ -615,7 +616,7 @@ defmodule :dog_interfaces do
   end
 
 
-  @spec ec2_instance_tag(char_list()) :: list() | []
+  @spec ec2_instance_tag(charlist()) :: list() | []
 
 
   def ec2_instance_tag(tag) do

@@ -7,6 +7,7 @@ defmodule :dog_turtle_sup do
   require Record
   require AMQPCore
   require Logger
+  require DogMacros
   alias DogMacros, as: M
 
   @behaviour :supervisor

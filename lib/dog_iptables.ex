@@ -5,39 +5,40 @@
 
 defmodule :dog_iptables do
   require Logger
+  require DogMacros
   alias DogMacros, as: M
 
 
   defp write_ipv4_docker_nat_ruleset(ruleset) do
     tempfile = M.erlconst_RUNDIR() ++ '/iptables-docker-nat.txt'
-    :ok = :file.write_file(tempfile, ruleset)
+    :ok = File.write(tempfile, ruleset)
     {:ok, tempfile}
   end
 
 
   defp write_ipv4_docker_filter_ruleset(ruleset) do
     tempfile = M.erlconst_RUNDIR() ++ '/iptables-docker-filter.txt'
-    :ok = :file.write_file(tempfile, ruleset)
+    :ok = File.write(tempfile, ruleset)
     {:ok, tempfile}
   end
 
 
-  @spec write_ipv4_ruleset(binary() | maybe_improper_list(binary() | maybe_improper_list(any(), binary() | []) | byte(), binary() | [])) :: {:ok, char_list()}
+  @spec write_ipv4_ruleset(binary() | maybe_improper_list(binary() | maybe_improper_list(any(), binary() | []) | byte(), binary() | [])) :: {:ok, charlist()}
 
 
   def write_ipv4_ruleset(ruleset) do
     tempfile = M.erlconst_RUNDIR() ++ '/iptables.txt'
-    :ok = :file.write_file(tempfile, ruleset)
+    :ok = File.write(tempfile, ruleset)
     {:ok, tempfile}
   end
 
 
-  @spec write_ipv6_ruleset(binary() | maybe_improper_list(binary() | maybe_improper_list(any(), binary() | []) | byte(), binary() | [])) :: {:ok, char_list()}
+  @spec write_ipv6_ruleset(binary() | maybe_improper_list(binary() | maybe_improper_list(any(), binary() | []) | byte(), binary() | [])) :: {:ok, charlist()}
 
 
   def write_ipv6_ruleset(ruleset) do
     tempfile = M.erlconst_RUNDIR() ++ '/ip6tables.txt'
-    :ok = :file.write_file(tempfile, ruleset)
+    :ok = File.write(tempfile, ruleset)
     {:ok, tempfile}
   end
 
@@ -47,7 +48,7 @@ defmodule :dog_iptables do
 
   defp write_ipv4_iptables_ruleset(ruleset) do
     tempfile = M.erlconst_RUNDIR() ++ '/ip4tables_iptables.txt'
-    :ok = :file.write_file(tempfile, ruleset)
+    :ok = File.write(tempfile, ruleset)
     :ok
   end
 
@@ -57,7 +58,7 @@ defmodule :dog_iptables do
 
   defp write_ipv6_iptables_ruleset(ruleset) do
     tempfile = M.erlconst_RUNDIR() ++ '/ip6tables_iptables.txt'
-    :ok = :file.write_file(tempfile, ruleset)
+    :ok = File.write(tempfile, ruleset)
     :ok
   end
 
@@ -67,7 +68,7 @@ defmodule :dog_iptables do
 
   defp write_ipv4_ipsets_ruleset(ruleset) do
     tempfile = M.erlconst_RUNDIR() ++ '/ip4tables_ipsets.txt'
-    :ok = :file.write_file(tempfile, ruleset)
+    :ok = File.write(tempfile, ruleset)
     :ok
   end
 
@@ -77,7 +78,7 @@ defmodule :dog_iptables do
 
   defp write_ipv6_ipsets_ruleset(ruleset) do
     tempfile = M.erlconst_RUNDIR() ++ '/ip6tables_ipsets.txt'
-    :ok = :file.write_file(tempfile, ruleset)
+    :ok = File.write(tempfile, ruleset)
     :ok
   end
 
@@ -86,7 +87,7 @@ defmodule :dog_iptables do
 
 
   def persist_ipv4_tables() do
-    enforcing = :application.get_env(:dog, :enforcing, true)
+    enforcing = Application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
         M.erlconst_IP4TABLES_SAVE_COMMAND() ++ ' > ' ++ M.erlconst_RUNDIR() ++ '/rules.v4'
@@ -103,7 +104,7 @@ defmodule :dog_iptables do
   end
 
 
-  @spec rm_nat() :: char_list()
+  @spec rm_nat() :: charlist()
 
 
   defp rm_nat() do
@@ -111,11 +112,11 @@ defmodule :dog_iptables do
   end
 
 
-  @spec apply_ipv4_ruleset(char_list()) :: :error | :ok
+  @spec apply_ipv4_ruleset(charlist()) :: :error | :ok
 
 
   defp apply_ipv4_ruleset(trainerFilterFile) do
-    enforcing = :application.get_env(:dog, :enforcing, true)
+    enforcing = Application.get_env(:dog, :enforcing, true)
     case(enforcing) do
       false ->
         :ok
@@ -125,10 +126,10 @@ defmodule :dog_iptables do
             {dockerNatRuleset, dockerFilterRuleset} = :dog_docker.iptables()
             write_ipv4_docker_nat_ruleset(dockerNatRuleset)
             write_ipv4_docker_filter_ruleset(dockerFilterRuleset)
-            {:ok, trainerFilter} = :file.read_file(trainerFilterFile)
-            trainerFilterWithoutCommit = :string.join(:lists.subtract(:dog_string.split(:erlang.binary_to_list(trainerFilter), '\n', :all), ['COMMIT']), '\n')
+            {:ok, trainerFilter} = File.read(trainerFilterFile)
+            trainerFilterWithoutCommit = Enum.join(:lists.subtract(String.split(trainerFilter, '\n'), ['COMMIT']), '\n')
             dockerTrainerFilterFile = M.erlconst_RUNDIR() ++ '/iptables-docker-trainer-filter.txt'
-            :file.write_file(dockerTrainerFilterFile, trainerFilterWithoutCommit)
+            File.write(dockerTrainerFilterFile, trainerFilterWithoutCommit)
             dockerNatFile = M.erlconst_RUNDIR() ++ '/iptables-docker-nat.txt'
             dockerFilterFile = M.erlconst_RUNDIR() ++ '/iptables-docker-filter.txt'
             dockerIptablesFile = M.erlconst_RUNDIR() ++ '/iptables-docker.txt'
@@ -144,7 +145,7 @@ defmodule :dog_iptables do
             end
           false ->
             removeNatFile = '/etc/dog_ex/rm-nat.txt'
-            :file.write_file(removeNatFile, rm_nat())
+            File.write(removeNatFile, rm_nat())
             cmd = 'cat ' ++ trainerFilterFile ++ ' ' ++ removeNatFile ++ ' | ' ++ M.erlconst_IP4TABLES_RESTORE_COMMAND()
             result = :dog_os.cmd(cmd)
             case(result) do
@@ -162,7 +163,7 @@ defmodule :dog_iptables do
 
 
   defp persist_ipv6_tables() do
-    enforcing = :application.get_env(:dog, :enforcing, true)
+    enforcing = Application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
         M.erlconst_IP6TABLES_SAVE_COMMAND() ++ ' > ' ++ M.erlconst_RUNDIR() ++ '/rules.v6'
@@ -179,11 +180,11 @@ defmodule :dog_iptables do
   end
 
 
-  @spec apply_ipv6_ruleset(char_list()) :: :error | :ok
+  @spec apply_ipv6_ruleset(charlist()) :: :error | :ok
 
 
   defp apply_ipv6_ruleset(tempFile) do
-    enforcing = :application.get_env(:dog, :enforcing, true)
+    enforcing = Application.get_env(:dog, :enforcing, true)
     case(enforcing) do
       false ->
         :ok
@@ -202,12 +203,12 @@ defmodule :dog_iptables do
   end
 
 
-  @spec read_current_ipv4_iptables() :: char_list()
+  @spec read_current_ipv4_iptables() :: charlist()
 
 
   def read_current_ipv4_iptables() do
-    useIpsets = :application.get_env(:dog, :use_ipsets, true)
-    enforcing = :application.get_env(:dog, :enforcing, true)
+    useIpsets = Application.get_env(:dog, :use_ipsets, true)
+    enforcing = Application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
         'cat ' ++ M.erlconst_RUNDIR() ++ '/ip4tables_iptables.txt'
@@ -224,12 +225,12 @@ defmodule :dog_iptables do
   end
 
 
-  @spec read_current_ipv6_iptables() :: char_list()
+  @spec read_current_ipv6_iptables() :: charlist()
 
 
   def read_current_ipv6_iptables() do
-    useIpsets = :application.get_env(:dog, :use_ipsets, true)
-    enforcing = :application.get_env(:dog, :enforcing, true)
+    useIpsets = Application.get_env(:dog, :use_ipsets, true)
+    enforcing = Application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
         'cat ' ++ M.erlconst_RUNDIR() ++ '/ip6tables_iptables.txt'
@@ -246,12 +247,12 @@ defmodule :dog_iptables do
   end
 
 
-  @spec read_current_ipv4_ipsets() :: char_list()
+  @spec read_current_ipv4_ipsets() :: charlist()
 
 
   def read_current_ipv4_ipsets() do
-    useIpsets = :application.get_env(:dog, :use_ipsets, true)
-    enforcing = :application.get_env(:dog, :enforcing, true)
+    useIpsets = Application.get_env(:dog, :use_ipsets, true)
+    enforcing = Application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
         'cat ' ++ M.erlconst_RUNDIR() ++ '/ip4tables_ipsets.txt'
@@ -268,12 +269,12 @@ defmodule :dog_iptables do
   end
 
 
-  @spec read_current_ipv6_ipsets() :: char_list()
+  @spec read_current_ipv6_ipsets() :: charlist()
 
 
   def read_current_ipv6_ipsets() do
-    useIpsets = :application.get_env(:dog, :use_ipsets, true)
-    enforcing = :application.get_env(:dog, :enforcing, true)
+    useIpsets = Application.get_env(:dog, :use_ipsets, true)
+    enforcing = Application.get_env(:dog, :enforcing, true)
     cmd = case(enforcing) do
       false ->
         'cat ' ++ M.erlconst_RUNDIR() ++ '/ip6tables_ipsets.txt'
@@ -334,8 +335,8 @@ defmodule :dog_iptables do
 
 
   defp update_iptables4(ruleset, retry) do
-    iptablesRestoreRetryLimit = :application.get_env(:dog, :iptables_restore_retry_limit, 5)
-    iptablesRestoreRetryWaitSeconds = :application.get_env(:dog, :iptables_restore_retry_wait_seconds, 3)
+    iptablesRestoreRetryLimit = Application.get_env(:dog, :iptables_restore_retry_limit, 5)
+    iptablesRestoreRetryWaitSeconds = Application.get_env(:dog, :iptables_restore_retry_wait_seconds, 3)
     :ok = backup_current_ipv4_iptables()
     {:ok, tempFile} = write_ipv4_ruleset(ruleset)
     case(apply_ipv4_ruleset(tempFile)) do
@@ -366,8 +367,8 @@ defmodule :dog_iptables do
 
 
   defp update_iptables6(ruleset, retry) do
-    iptablesRestoreRetryLimit = :application.get_env(:dog, :iptables_restore_retry_limit, 5)
-    iptablesRestoreRetryWaitSeconds = :application.get_env(:dog, :iptables_restore_retry_wait_seconds, 3)
+    iptablesRestoreRetryLimit = Application.get_env(:dog, :iptables_restore_retry_limit, 5)
+    iptablesRestoreRetryWaitSeconds = Application.get_env(:dog, :iptables_restore_retry_wait_seconds, 3)
     :ok = backup_current_ipv6_iptables()
     {:ok, tempFile} = write_ipv6_ruleset(ruleset)
     case(apply_ipv6_ruleset(tempFile)) do
@@ -404,7 +405,7 @@ defmodule :dog_iptables do
       [] ->
         :pass
       _ ->
-        case(:application.get_env(:dog, :use_ipsets, true)) do
+        case(Application.get_env(:dog, :use_ipsets, true)) do
           true ->
             :ok = :dog_agent.create_ipsets(ipsets)
           false ->
@@ -437,7 +438,7 @@ defmodule :dog_iptables do
         Logger.debug('R6IptablesRuleset: #{r6IptablesRuleset}')
         :ok = write_ipv6_iptables_ruleset(r6IptablesRuleset)
     end
-    case(:application.get_env(:dog, :use_ipsets, true)) do
+    case(Application.get_env(:dog, :use_ipsets, true)) do
       true ->
         case(r4IpsetsRuleset) do
           false ->
@@ -547,7 +548,7 @@ defmodule :dog_iptables do
   end
 
 
-  @spec create_hash(char_list()) :: any()
+  @spec create_hash(charlist()) :: any()
 
 
   def create_hash(ruleset) do
@@ -556,7 +557,7 @@ defmodule :dog_iptables do
   end
 
 
-  @spec rule_count(char_list()) :: number()
+  @spec rule_count(charlist()) :: number()
 
 
   def rule_count(ruleset) do

@@ -8,21 +8,21 @@ defmodule :dog_state do
   require Record
   require Logger
 
-  @typep ec2_availability_zone() :: char_list()
+  @typep ec2_availability_zone() :: charlist()
 
-  @typep ec2_instance_id() :: char_list()
+  @typep ec2_instance_id() :: charlist()
 
   @typep ec2_instance_tags() :: map()
 
-  @typep ec2_owner_id() :: char_list()
+  @typep ec2_owner_id() :: charlist()
 
-  @typep ec2_region() :: char_list()
+  @typep ec2_region() :: charlist()
 
   @typep ec2_security_group_ids() :: list()
 
-  @typep ec2_subnet_id() :: char_list()
+  @typep ec2_subnet_id() :: charlist()
 
-  @typep ec2_vpc_id() :: char_list()
+  @typep ec2_vpc_id() :: charlist()
 
   @typep environment() :: binary()
 
@@ -315,7 +315,7 @@ defmodule :dog_state do
   end
 
 
-  @spec get_ec2_region(dog_state()) :: char_list()
+  @spec get_ec2_region(dog_state()) :: charlist()
 
 
   def get_ec2_region(state) do
@@ -331,7 +331,7 @@ defmodule :dog_state do
   end
 
 
-  @spec get_ec2_instance_id(dog_state()) :: char_list()
+  @spec get_ec2_instance_id(dog_state()) :: charlist()
 
 
   def get_ec2_instance_id(state) do
@@ -347,7 +347,7 @@ defmodule :dog_state do
   end
 
 
-  @spec get_ec2_availability_zone(dog_state()) :: char_list()
+  @spec get_ec2_availability_zone(dog_state()) :: charlist()
 
 
   def get_ec2_availability_zone(state) do
@@ -379,7 +379,7 @@ defmodule :dog_state do
   end
 
 
-  @spec get_ec2_subnet_id(dog_state()) :: char_list()
+  @spec get_ec2_subnet_id(dog_state()) :: charlist()
 
 
   def get_ec2_subnet_id(state) do
@@ -395,7 +395,7 @@ defmodule :dog_state do
   end
 
 
-  @spec get_ec2_vpc_id(dog_state()) :: char_list()
+  @spec get_ec2_vpc_id(dog_state()) :: charlist()
 
 
   def get_ec2_vpc_id(state) do

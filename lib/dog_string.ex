@@ -6,7 +6,7 @@
 defmodule :dog_string do
   require Logger
 
-  @spec split(char_list(), char_list()) :: list()
+  @spec split(charlist(), charlist()) :: list()
 
 
   def split(string, delimiter, :all) do
@@ -19,7 +19,7 @@ defmodule :dog_string do
   end
 
 
-  @spec trim(char_list(), :trailing, char_list()) :: list()
+  @spec trim(charlist(), :trailing, charlist()) :: list()
 
 
   def trim(string, :trailing, ' ') do

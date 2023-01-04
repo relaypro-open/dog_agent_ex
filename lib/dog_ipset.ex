@@ -5,6 +5,7 @@
 
 defmodule :dog_ipset do
   require Logger
+  require DogMacros
   alias DogMacros, as: M
 
 
@@ -104,7 +105,7 @@ defmodule :dog_ipset do
   end
 
 
-  @spec create_hash(char_list()) :: any()
+  @spec create_hash(charlist()) :: any()
 
 
   def create_hash(ipset) do

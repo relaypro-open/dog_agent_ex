@@ -7,11 +7,9 @@ defmodule :dog_sup do
 
   @behaviour :supervisor
   require Logger
-  alias DogMacros, as: M
-
 
   def start_link() do
-    :supervisor.start_link({:local, M.erlconst_SERVER()}, __MODULE__, [])
+    :supervisor.start_link({:local, __MODULE__}, __MODULE__, [])
   end
 
 

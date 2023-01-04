@@ -7,6 +7,7 @@ defmodule :dog_iptables_agent do
 
   @behaviour :gen_server
   require Logger
+  require DogMacros
   alias DogMacros, as: M
 
 

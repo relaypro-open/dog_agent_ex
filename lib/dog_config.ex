@@ -5,6 +5,7 @@
 
 defmodule :dog_config do
   require Logger
+  require DogMacros
   alias DogMacros, as: M
 
   @spec do_init_config() :: atom()

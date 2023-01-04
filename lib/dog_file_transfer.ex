@@ -9,6 +9,7 @@ defmodule :dog_file_transfer do
 
   require Logger
   require Record
+  require DogMacros
   alias DogMacros, as: M
 
   @behaviour :gen_server

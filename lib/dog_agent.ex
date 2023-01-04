@@ -188,7 +188,7 @@ defmodule :dog_agent do
   end
 
 
-  @spec host_routing_key() :: char_list()
+  @spec host_routing_key() :: charlist()
 
 
   def host_routing_key() do
@@ -205,7 +205,7 @@ defmodule :dog_agent do
   end
 
 
-  @spec group_routing_key() :: char_list()
+  @spec group_routing_key() :: charlist()
 
 
   def group_routing_key() do

@@ -70,6 +70,41 @@ defmodule DogMacros do
     end
   end
 
+  defmacro erlconst_IBM_METADATA_BASE_URL() do
+    quote do
+      'https://api.service.softlayer.com'
+    end
+  end
+
+  defmacro erlconst_IP4TABLES_SAVE_COMMAND() do
+    quote do
+      'echo \'\`/home/dog/bin/iptables-save -t filter\`\''
+    end
+  end
+
+  defmacro erlconst_IP6TABLES_SAVE_COMMAND() do
+    quote do
+      'echo \'\`/home/dog/bin/ip6tables-save -t filter\`\''
+    end
+  end
+
+  defmacro erlconst_IP4TABLES_RESTORE_COMMAND() do
+    quote do
+      '/home/dog/bin/iptables-restore'
+    end
+  end
+
+  defmacro erlconst_IP6TABLES_RESTORE_COMMAND() do
+    quote do
+      '/home/dog/bin/ip6tables-restore'
+    end
+  end
+
+  defmacro erlconst_RUNDIR() do
+    quote do
+      '/etc/dog_ex'
+    end
+  end
 
   # End included file: dog.hrl
 end
