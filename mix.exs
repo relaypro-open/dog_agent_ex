@@ -47,9 +47,6 @@ defmodule DogAgentEx.MixProject do
     #{:remix, "~> 0.0.1", only: :dev},
     {:turtle, git: "https://github.com/relaypro-open/turtle.git", branch: "feature/remove_lager"},
     {:uuid, ">=0.0.0", hex: "uuid_erl"},
-    #{:wobserver, "~> 0.1.8"}, #doesn't work w/erlang 24, also can't pull from github
-    #{:plug_cowboy, "~> 1.0"},
-    #{:plug_crypto, "~> 1.2"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]

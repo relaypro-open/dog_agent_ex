@@ -34,13 +34,13 @@ config :erldocker,
   docker_http: <<"http+unix://%2Fvar%2Frun%2Fdocker.sock">>
 
 config :erlexec,
-  #debug: 1,
-  #verbose: true,
+  debug: 0,
+  verbose: false,
   root: true, #Allow running child processes as root
   args: [],
   #alarm: 5,  %% sec deadline for the port program to clean up child pids
-  user: "root",
-  limit_users: ["root"]
+  user: 'root',
+  limit_users: ['root']
 
 #config :wobserver,
 #  mode: :standalone,
