@@ -1,7 +1,8 @@
 import Config
 
-config :logger, :console,
-    level: :debug
+config :logger, :console, 
+  metadata: [:module, :function, :line],
+  level: :debug
 
 config :dog,
   version: "local_docker",
