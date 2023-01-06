@@ -92,13 +92,15 @@ defmodule :dog_file_transfer do
                       {:ack, state}
                   end
               end
-            catch
-              exception, reason ->
-                Logger.debug('#{exception}, #{reason}')
-                {:ack, reason}
-            else
-              {:ack, newState} ->
-                {:ack, newState}
+      #      catch
+      #        exception, reason ->
+      #          Logger.debug("#{exception}, #{reason}")
+      #          {:ack, reason}
+      #      else
+      #        {:ack, newState} ->
+      #          {:ack, newState}
+            after
+              {:ack, :crash}
             end
           :delete_file ->
             try do
@@ -127,7 +129,7 @@ defmodule :dog_file_transfer do
               end
             catch
               exception, reason ->
-                Logger.debug('#{exception}, #{reason}')
+                Logger.debug("#{exception}, #{reason}")
                 {:reply, "text/json", :jsx.encode([reason]), state}
             else
               reply ->
@@ -143,7 +145,7 @@ defmodule :dog_file_transfer do
               end
             catch
               exception, reason ->
-                Logger.debug('#{exception}, #{reason}')
+                Logger.debug("#{exception}, #{reason}")
                 {:reply, "text/json", :jsx.encode([reason]), state}
             else
               reply ->

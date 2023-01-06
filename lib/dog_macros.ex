@@ -106,5 +106,11 @@ defmodule DogMacros do
     end
   end
 
+  defmacro erlconst_SANDBOX_FILE_ROOT() do
+    quote do
+      '/'
+    end
+  end
+
   # End included file: dog.hrl
 end
