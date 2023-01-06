@@ -75,6 +75,8 @@ RUN mkdir -p /etc/dog_ex/certs \
 	&& mkdir -p /etc/dog_ex/private \
 	&& chmod 700 /etc/dog_ex/private
 
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
 #CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog start"
 CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog start"; /bin/bash -c "sleep infinity"
 #CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "sleep infinity"
