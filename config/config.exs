@@ -37,16 +37,21 @@ config :logger,
     {LoggerFileBackend, :debug}
   ]
 
-config :logger, :info,
+config :logger, :info, 
+  metadata: [:module, :function, :line],
   path: "/var/log/dog_ex/console.log",
   level: :info
 
-config :logger, :error,
+config :logger, :error, 
+  metadata: [:module, :function, :line],
   path: "/var/log/dog_ex/error.log",
   level: :error
 
-config :logger, :debug,
+config :logger, :debug, 
+  metadata: [:module, :function, :line],
   path: "/var/log/dog_ex/debug.log",
-  level: :debug
+  level: :debug,
+  handle_otp_reports: true,
+  handle_sasl_reports: true
 
 import_config "#{Mix.env()}.exs"
