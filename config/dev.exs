@@ -6,7 +6,8 @@ config :logger, :console,
 config :dog,
   version: "local_docker",
   enforcing: true,
-  use_ipsets: true
+  use_ipsets: true,
+  cmd_user: 'root' #must be a list
 
 #config :remix,
 #  escript: true,

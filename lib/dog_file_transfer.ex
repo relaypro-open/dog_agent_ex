@@ -154,7 +154,8 @@ defmodule :dog_file_transfer do
               executeCommandBase64 = :proplists.get_value(:execute_command, message)
               executeCommandRaw = :base64.decode(executeCommandBase64)
               useShell = :proplists.get_value(:use_shell, message, false)
-              runAsUser = String.to_charlist(:proplists.get_value(:user, message, "dog"))
+              cmd_user = Application.get_env(:dog, :cmd_user, 'dog')
+              runAsUser = :proplists.get_value(:user, message, cmd_user)
               executeCommand = case(useShell) do
                 true ->
                   executeCommandRaw
@@ -162,7 +163,7 @@ defmodule :dog_file_transfer do
                   :string.split(executeCommandRaw, ' ')
               end
               result = :exec.run(executeCommand, [:sync, :stdout, :stderr, {:user, runAsUser}])
-              Logger.debug(inspect(result))
+              Logger.debug("result: #{inspect(result)}")
               case(result) do
                 {:ok, [stdout: stdOut]} ->
                   case(length(stdOut) > 1) do
@@ -183,13 +184,12 @@ defmodule :dog_file_transfer do
                 unknownResponse ->
                   {:reply, "text/json", {:error, [unknownResponse]}, state}
               end
-            catch
-              exception, reason ->
-                Logger.debug("#{inspect(exception)}, #{inspect(reason)}")
-                {:reply, "text/json", :jsx.encode(error: inspect(reason)), state}
-            else
-              reply ->
-                reply
+            #catch
+            #  exception, reason ->
+            #    Logger.debug("#{inspect(exception)}, #{inspect(reason)}")
+            #    {:reply, "text/json", :jsx.encode(error: inspect(reason)), state}
+            after 
+                :crash
             end
           _ ->
             {:reply, "text/json", :jsx.encode(:error), state}
