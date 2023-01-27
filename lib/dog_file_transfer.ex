@@ -55,151 +55,155 @@ defmodule :dog_file_transfer do
         userData = :proplists.get_value(:user_data, message)
         case(command) do
           :send_file ->
-            try do
-              filenameClean = :filelib.safe_relative_path(:string.trim(filename, :leading, '/'), [])
-              filePath = M.erlconst_SANDBOX_FILE_ROOT() ++ filenameClean
-              case(filenameClean) do
-                :unsafe ->
-                  {:reply, "text/json", :jsx.encode(:file_bad), state}
-                _ ->
-                  fileTotalBlocks = :proplists.get_value(:total_blocks, message)
-                  fileCurrentBlock = :proplists.get_value(:current_block, message)
-                  maxBlockSizeBytes = :proplists.get_value(:max_block_size_bytes, message)
-                  fileBlock = :maps.get(:file_block, userData)
-                  {:ok, ioDevice} = case(fileCurrentBlock) do
-                    1 ->
-                      :filelib.ensure_dir(:filename.dirname(filePath) ++ '/')
-                      :file.open(filePath, [:write, :raw])
-                    _ ->
-                      :file.open(filePath, [:write, :read, :raw])
-                  end
-                  case(fileCurrentBlock) do
-                    1 when fileTotalBlocks === 1 ->
-                      :file.pwrite(ioDevice, 0, fileBlock)
-                      :file.close(ioDevice)
-                      {:ack, state}
-                    1 when fileTotalBlocks > 1 ->
-                      :file.pwrite(ioDevice, 0, fileBlock)
-                      {:ack, state}
-                    n when n >= fileTotalBlocks ->
-                      startByte = (fileCurrentBlock - 1) * maxBlockSizeBytes
-                      :file.pwrite(ioDevice, startByte, fileBlock)
-                      :file.close(ioDevice)
-                      {:ack, state}
-                    _ ->
-                      startByte = (fileCurrentBlock - 1) * maxBlockSizeBytes
-                      :file.pwrite(ioDevice, startByte, fileBlock)
-                      {:ack, state}
-                  end
-              end
-      #      catch
-      #        exception, reason ->
-      #          Logger.debug("#{exception}, #{reason}")
-      #          {:ack, reason}
-      #      else
-      #        {:ack, newState} ->
-      #          {:ack, newState}
-            after
-              {:ack, :crash}
-            end
+            send_file(state, apiUser, message, filename, userData)
           :delete_file ->
-            try do
-              filenameClean = :filelib.safe_relative_path(:string.trim(filename, :leading, '/'), [])
-              filePath = M.erlconst_SANDBOX_FILE_ROOT() ++ filenameClean
-              case(filenameClean) do
-                :unsafe ->
-                  {:reply, "text/json", :jsx.encode(:file_bad), state}
-                _ ->
-                  case(:filelib.is_dir(filePath)) do
-                    true ->
-                      case(:file.del_dir(filePath)) do
-                        {:error, error} ->
-                          {:reply, "text/json", :jsx.encode(error: error)}
-                        :ok ->
-                          {:reply, "text/json", :jsx.encode([:ok]), state}
-                      end
-                    false ->
-                      case(:file.delete(filePath)) do
-                        {:error, error} ->
-                          {:reply, "text/json", :jsx.encode(error: error)}
-                        :ok ->
-                          {:reply, "text/json", :jsx.encode([:ok]), state}
-                      end
-                  end
-              end
-            catch
-              exception, reason ->
-                Logger.debug("#{exception}, #{reason}")
-                {:reply, "text/json", :jsx.encode([reason]), state}
-            else
-              reply ->
-                reply
-            end
+            delete_file(state, apiUser, filename)
           :fetch_file ->
-            try do
-              case(:file.read_file(filename)) do
-                {:ok, bytes} ->
-                  {:reply, "application/octet-stream", bytes, state}
-                {:error, error} ->
-                  {:reply, "text/json", :jsx.encode(error: error), state}
-              end
-            catch
-              exception, reason ->
-                Logger.debug("#{exception}, #{reason}")
-                {:reply, "text/json", :jsx.encode([reason]), state}
-            else
-              reply ->
-                reply
-            end
+            fetch_file(state, apiUser, filename)
           :execute_command ->
-            try do
-              executeCommandBase64 = :proplists.get_value(:execute_command, message)
-              executeCommandRaw = :base64.decode(executeCommandBase64)
-              useShell = :proplists.get_value(:use_shell, message, false)
-              cmd_user = Application.get_env(:dog, :cmd_user, 'dog')
-              runAsUser = :proplists.get_value(:user, message, cmd_user)
-              executeCommand = case(useShell) do
-                true ->
-                  executeCommandRaw
-                false ->
-                  :string.split(executeCommandRaw, ' ')
-              end
-              result = :exec.run(executeCommand, [:sync, :stdout, :stderr, {:user, runAsUser}])
-              Logger.debug("result: #{inspect(result)}")
-              case(result) do
-                {:ok, [stdout: stdOut]} ->
-                  case(length(stdOut) > 1) do
-                    true ->
-                      parsedStdOut = [:dog_common.binary_join(tl(stdOut), "")]
-                      {:reply, "text/json", :jsx.encode(ok: parsedStdOut), state}
-                    false ->
-                      {:reply, "text/json", :jsx.encode(ok: stdOut), state}
-                  end
-                {:ok, []} ->
-                  {:reply, "text/json", :jsx.encode(ok: []), state}
-                {:error, [exit_status: _exitStatus, stdout: stdOut]} ->
-                  {:reply, "text/json", :jsx.encode(error: stdOut), state}
-                {:error, [exit_status: _exitStatus, stderr: stdErr]} ->
-                  {:reply, "text/json", :jsx.encode(error: stdErr), state}
-                {:error, reason} ->
-                  {:reply, "text/json", :jsx.encode(error: List.to_string(reason)), state}
-                unknownResponse ->
-                  {:reply, "text/json", {:error, [unknownResponse]}, state}
-              end
-            #catch
-            #  exception, reason ->
-            #    Logger.debug("#{inspect(exception)}, #{inspect(reason)}")
-            #    {:reply, "text/json", :jsx.encode(error: inspect(reason)), state}
-            after 
-                :crash
-            end
+            execute_command(state, apiUser, message)
           _ ->
             {:reply, "text/json", :jsx.encode(:error), state}
         end
     end
   end
 
+  def send_file(state, apiUser, message, filename, userData) do
+    try do
+      filenameClean = :filelib.safe_relative_path(:string.trim(filename, :leading, '/'), [])
+      filePath = M.erlconst_SANDBOX_FILE_ROOT() ++ filenameClean
+      case(filenameClean) do
+        :unsafe ->
+          {:reply, "text/json", :jsx.encode(:file_bad), state}
+        _ ->
+          fileTotalBlocks = :proplists.get_value(:total_blocks, message)
+          fileCurrentBlock = :proplists.get_value(:current_block, message)
+          maxBlockSizeBytes = :proplists.get_value(:max_block_size_bytes, message)
+          fileBlock = :maps.get(:file_block, userData)
+          {:ok, ioDevice} = case(fileCurrentBlock) do
+            1 ->
+              :filelib.ensure_dir(:filename.dirname(filePath) ++ '/')
+              :file.open(filePath, [:write, :raw])
+            _ ->
+              :file.open(filePath, [:write, :read, :raw])
+          end
+          case(fileCurrentBlock) do
+            1 when fileTotalBlocks === 1 ->
+              :file.pwrite(ioDevice, 0, fileBlock)
+              :file.close(ioDevice)
+              {:ack, state}
+            1 when fileTotalBlocks > 1 ->
+              :file.pwrite(ioDevice, 0, fileBlock)
+              {:ack, state}
+            n when n >= fileTotalBlocks ->
+              startByte = (fileCurrentBlock - 1) * maxBlockSizeBytes
+              :file.pwrite(ioDevice, startByte, fileBlock)
+              :file.close(ioDevice)
+              {:ack, state}
+            _ ->
+              startByte = (fileCurrentBlock - 1) * maxBlockSizeBytes
+              :file.pwrite(ioDevice, startByte, fileBlock)
+              {:ack, state}
+          end
+      end
+    after
+      {:ack, :crash}
+    end
+  end
 
+  def delete_file(state, apiUser, filename) do
+    try do
+      filenameClean = :filelib.safe_relative_path(:string.trim(filename, :leading, '/'), [])
+      filePath = M.erlconst_SANDBOX_FILE_ROOT() ++ filenameClean
+      case(filenameClean) do
+        :unsafe ->
+          {:reply, "text/json", :jsx.encode(:file_bad), state}
+        _ ->
+          case(:filelib.is_dir(filePath)) do
+            true ->
+              case(:file.del_dir(filePath)) do
+                {:error, error} ->
+                  {:reply, "text/json", :jsx.encode(error: error)}
+                :ok ->
+                  {:reply, "text/json", :jsx.encode([:ok]), state}
+              end
+            false ->
+              case(:file.delete(filePath)) do
+                {:error, error} ->
+                  {:reply, "text/json", :jsx.encode(error: error)}
+                :ok ->
+                  {:reply, "text/json", :jsx.encode([:ok]), state}
+              end
+          end
+      end
+    catch #TODO: replace with 'after'
+      exception, reason ->
+        Logger.debug("#{exception}, #{reason}")
+        {:reply, "text/json", :jsx.encode([reason]), state}
+    else
+      reply ->
+        reply
+    end
+  end
+
+  def fetch_file(state, apiUser, filename) do
+    try do
+      case(:file.read_file(filename)) do
+        {:ok, bytes} ->
+          {:reply, "application/octet-stream", bytes, state}
+        {:error, error} ->
+          {:reply, "text/json", :jsx.encode(error: error), state}
+      end
+    catch #TODO: replace with 'after'
+      exception, reason ->
+        Logger.debug("#{exception}, #{reason}")
+        {:reply, "text/json", :jsx.encode([reason]), state}
+    else
+      reply ->
+        reply
+    end
+  end
+
+  def execute_command(state, apiUser, message) do
+    try do
+      executeCommandBase64 = :proplists.get_value(:execute_command, message)
+      executeCommandRaw = :base64.decode(executeCommandBase64)
+      useShell = :proplists.get_value(:use_shell, message, false)
+      cmd_user = Application.get_env(:dog, :cmd_user, 'dog')
+      runAsUser = :proplists.get_value(:user, message, cmd_user)
+      executeCommand = case(useShell) do
+        true ->
+          executeCommandRaw
+        false ->
+          :string.split(executeCommandRaw, ' ')
+      end
+      result = :exec.run(executeCommand, [:sync, :stdout, :stderr, {:user, runAsUser}])
+      Logger.debug("result: #{inspect(result)}")
+      case(result) do
+        {:ok, [stdout: stdOut]} ->
+          case(length(stdOut) > 1) do
+            true ->
+              parsedStdOut = Enum.join(stdOut, "")
+              {:reply, "text/json", :jsx.encode(ok: parsedStdOut), state}
+            false ->
+              {:reply, "text/json", :jsx.encode(ok: stdOut), state}
+          end
+        {:ok, []} ->
+          {:reply, "text/json", :jsx.encode(ok: []), state}
+        {:error, [exit_status: _exitStatus, stdout: stdOut]} ->
+          {:reply, "text/json", :jsx.encode(error: stdOut), state}
+        {:error, [exit_status: _exitStatus, stderr: stdErr]} ->
+          {:reply, "text/json", :jsx.encode(error: stdErr), state}
+        {:error, reason} ->
+          {:reply, "text/json", :jsx.encode(error: List.to_string(reason)), state}
+        unknownResponse ->
+          {:reply, "text/json", {:error, [unknownResponse]}, state}
+      end
+    after 
+        :crash
+    end
+  end
+ 
   @spec start_link(map()) :: {:ok, pid()} | :ignore | {:error, {:already_started, pid()} | term()}
 
 
