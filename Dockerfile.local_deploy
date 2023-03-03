@@ -2,8 +2,8 @@
 FROM elixir:1.13 as base
 #FROM erlang:latest as base
 
-RUN apt-get update
-RUN apt-get install -y libcap-dev locales
+RUN apt-get update && apt-get install -y libcap-dev locales iptables ipset less ack lsb-release vim-tiny jq curl
+
 #set locale to utf8
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen
@@ -43,7 +43,6 @@ RUN MIX_ENV=dev mix release
 #FROM debian:bullseye-slim as deploy
 FROM compile as deploy
 
-RUN apt-get update && apt-get install -y iptables ipset less ack lsb-release vim-tiny jq curl
 
 
 RUN mkdir -p /opt/dog_ex
