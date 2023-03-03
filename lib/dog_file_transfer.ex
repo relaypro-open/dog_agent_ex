@@ -170,14 +170,13 @@ defmodule :dog_file_transfer do
       executeCommandRaw = :base64.decode(executeCommandBase64)
       useShell = :proplists.get_value(:use_shell, message, false)
       cmd_user = Application.get_env(:dog, :cmd_user, 'dog')
-      runAsUser = :proplists.get_value(:user, message, cmd_user)
       executeCommand = case(useShell) do
         true ->
           executeCommandRaw
         false ->
           :string.split(executeCommandRaw, ' ')
       end
-      result = :exec.run(executeCommand, [:sync, :stdout, :stderr, {:user, runAsUser}])
+      result = :exec.run(executeCommand, [:sync, :stdout, :stderr, {:user, cmd_user}])
       Logger.debug("result: #{inspect(result)}")
       case(result) do
         {:ok, [stdout: stdOut]} ->
