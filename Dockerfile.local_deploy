@@ -1,5 +1,5 @@
 # Build stage 0
-FROM elixir:1.13 as base
+FROM elixir:1.14 as base
 #FROM erlang:latest as base
 
 RUN apt-get update && apt-get install -y libcap-dev locales iptables ipset less ack lsb-release vim-tiny jq curl
@@ -53,8 +53,8 @@ COPY config/config.json.dev /etc/dog_ex/config.json
 RUN mkdir -p /var/log/dog_ex
 # Install the released application
 COPY --from=compile /data/_build/dev/rel/dog /opt/dog_ex
-RUN cp /data/erlexec/priv/x86_64-pc-linux-gnu/exec-port /opt/dog_ex/lib/erlexec-2.0.0/priv/x86_64-pc-linux-gnu/exec-port
-RUN chmod 4555 /opt/dog_ex/lib/erlexec-2.0.0/priv/x86_64-pc-linux-gnu/exec-port
+RUN cp /data/erlexec/priv/x86_64-pc-linux-gnu/exec-port /opt/dog_ex/lib/erlexec-*/priv/x86_64-pc-linux-gnu/exec-port
+RUN chmod 4555 /opt/dog_ex/lib/erlexec-*/priv/x86_64-pc-linux-gnu/exec-port
 #COPY _build/dev/rel/dog_agent_ex /opt/dog_ex
 
 #RUN chmod 4555 /opt/dog/lib/erlexec-1.20.1/priv/x86_64-pc-linux-gnu/exec-port
