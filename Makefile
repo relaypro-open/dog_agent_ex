@@ -31,7 +31,7 @@ archive: dist
 	   --exclude=".tool-versions" \
 	   --exclude=".elixir_ls" \
 	   --exclude=".formatter.exs" \
-	   -C gemini \
+	   -C dog_agent_ex \
 	   . > dist/$(BUILD_STREAM)-$(BUILD_ID).tar.gz)
 
 dist:
