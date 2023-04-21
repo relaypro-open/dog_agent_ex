@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build --rm -t dog_agent_ex_build --file ./Dockerfile.jenkins'
+                sh 'docker build --rm -t dog_agent_ex_build --file ./Dockerfile.jenkins .'
             }
         }
     }
