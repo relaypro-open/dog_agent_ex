@@ -54,4 +54,4 @@ config :logger, :debug,
   handle_otp_reports: true,
   handle_sasl_reports: true
 
-import_config "#{Mix.env()}.exs"
+  import_config "/etc/dog_ex/env_config.exs"

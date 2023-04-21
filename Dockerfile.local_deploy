@@ -1,19 +1,7 @@
 # Build stage 0
 FROM elixir:1.14 as base
 #FROM erlang:latest as base
-
-RUN apt-get update && apt-get install -y libcap-dev locales iptables ipset less ack lsb-release vim-tiny jq curl
-
-#set locale to utf8
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-    locale-gen
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
-ENV LC_ALL en_US.UTF-8  
-#install elixir
-#RUN cd /tmp; wget https://github.com/elixir-lang/elixir/releases/download/v1.14.1/elixir-otp-25.zip 
-#RUN mkdir -p /opt/elixir; cd /opt/elixir; unzip /tmp/elixir-otp-25.zip
-#ENV PATH="${PATH}:/opt/elixir/bin"
+RUN apt-get update &&  apt-get install -y libcap-dev iptables ipset less ack lsb-release vim jq curl dnsutils netcat
 
 #Set working directory
 RUN mkdir /data
@@ -34,30 +22,27 @@ FROM base as compile
 WORKDIR /data
 COPY . .
 COPY --from=base /data/_build .
-copy config/*.exs config/
+copy config/config.exs config/
+COPY config/dev.exs /etc/dog_ex/env_config.exs
 
 RUN mix --version
 #Build the release
-RUN MIX_ENV=dev mix release
+RUN mix release
 
 #FROM debian:bullseye-slim as deploy
 FROM compile as deploy
 
 
-
 RUN mkdir -p /opt/dog_ex
 RUN mkdir -p /etc/dog_ex
 RUN mkdir -p /etc/iptables
-COPY config/dev.exs /etc/dog_ex/dog.config
 COPY config/config.json.dev /etc/dog_ex/config.json
 RUN mkdir -p /var/log/dog_ex
 # Install the released application
 COPY --from=compile /data/_build/dev/rel/dog /opt/dog_ex
 RUN cp /data/erlexec/priv/x86_64-pc-linux-gnu/exec-port /opt/dog_ex/lib/erlexec-*/priv/x86_64-pc-linux-gnu/exec-port
 RUN chmod 4555 /opt/dog_ex/lib/erlexec-*/priv/x86_64-pc-linux-gnu/exec-port
-#COPY _build/dev/rel/dog_agent_ex /opt/dog_ex
 
-#RUN chmod 4555 /opt/dog/lib/erlexec-1.20.1/priv/x86_64-pc-linux-gnu/exec-port
 RUN mkdir -p /home/dog/bin
 RUN cp /usr/sbin/ipset /home/dog/bin/ipset
 RUN cp /usr/sbin/iptables-save /home/dog/bin/
@@ -76,6 +61,5 @@ RUN mkdir -p /etc/dog_ex/certs \
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-#CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog start"
-CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog start"; /bin/bash -c "sleep infinity"
+CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog start"
 #CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "sleep infinity"
