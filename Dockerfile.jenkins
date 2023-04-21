@@ -1,0 +1,15 @@
+FROM elixir:1.14 as base
+
+RUN apt-get update && apt-get install -y libcap-dev locales iptables ipset less ack lsb-release vim-tiny jq curl
+
+#set locale to utf8
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen
+ENV LANG en_US.UTF-8  
+ENV LANGUAGE en_US:en  
+ENV LC_ALL en_US.UTF-8  
+
+#Set working directory
+WORKDIR /data
+
+CMD /bin/bash
