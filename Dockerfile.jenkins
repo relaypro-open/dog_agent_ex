@@ -13,6 +13,6 @@ RUN mix deps.get \
     && mix deps.clean --all --build \
     && mix compile \
     && mix test \
-    && MIX_ENV=qa mix release --path dog_agent_ex
+    && MIX_ENV=dev mix release --path dog_agent_ex
 
 CMD ["/bin/bash"]
