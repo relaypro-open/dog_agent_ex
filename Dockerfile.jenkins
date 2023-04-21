@@ -1,19 +1,18 @@
 FROM elixir:1.14 as base
 
-RUN apt-get update && apt-get install -y libcap-dev locales iptables ipset less ack lsb-release vim-tiny jq curl
+RUN apt-get update && apt-get install -y libcap-dev locales iptables ipset lsb-release jq curl make
 
-#set locale to utf8
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-    locale-gen
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
-ENV LC_ALL en_US.UTF-8
+RUN mix local.hex --force && mix local.rebar --force
 
+WORKDIR /app
 
-#Set working directory
-ENV APP_HOME /app
-VOLUME $APP_HOME
-RUN mkdir -p $APP_HOME
-WORKDIR $APP_HOME
+COPY . /app
 
-CMD /bin/bash
+RUN mix deps.get \
+    # Needed to remove tertiary beams with wrong OTP version
+    && mix deps.clean --all --build \
+    && mix compile \
+    && mix test \
+    && MIX_ENV=qa mix release --path dog_agent_ex
+
+CMD ["/bin/bash"]

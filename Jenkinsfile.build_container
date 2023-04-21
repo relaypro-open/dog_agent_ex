@@ -4,7 +4,20 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build --rm -t dog_agent_ex_build --file ./Dockerfile.jenkins .'
+                sh 'BUILD_ID="${BUILD_ID}" BUILD_STREAM="${buildStream}" make build'
+            }
+
+            post {
+                success {
+                    archiveArtifacts 'dist/*.tar.gz'
+                }
+            }
+        }
+        stage('Upload artifact to S3') {
+            steps {
+                withAWS(profile: 'default') {
+                    s3Upload bucket:'product-builds', path: 'dog_agent_ex/', workingDir: 'dist', includePathPattern: '*.tar.gz'
+                }
             }
         }
     }
