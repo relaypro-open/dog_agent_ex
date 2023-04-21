@@ -10,6 +10,8 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8  
 
 #Set working directory
-WORKDIR /data
+ENV APP_HOME /app
+RUN mkdir -p $APP_HOME
+WORKDIR $APP_HOME
 
 CMD /bin/bash
