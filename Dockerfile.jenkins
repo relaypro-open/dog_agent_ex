@@ -8,6 +8,7 @@ WORKDIR /app
 
 COPY . /app
 
+RUN mkdir /etc/dog_ex
 COPY config/default.exs /etc/dog_ex/env_config.exs
 
 RUN mix deps.get \
