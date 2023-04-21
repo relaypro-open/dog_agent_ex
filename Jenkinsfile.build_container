@@ -1,0 +1,11 @@
+pipeline {
+    agent { label 'docker' }
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'docker build --rm -t dog_agent_ex_build .'
+            }
+        }
+    }
+}
