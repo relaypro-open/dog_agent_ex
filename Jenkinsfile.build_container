@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'DOG_ENV'="${dog_env}" 'BUILD_ID="${BUILD_ID}" BUILD_STREAM="${buildStream}" make build'
+                sh DOG_ENV="${dog_env}" 'BUILD_ID="${BUILD_ID}" BUILD_STREAM="${buildStream}" make build'
             }
 
             post {
