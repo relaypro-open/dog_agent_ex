@@ -12,6 +12,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                sh 'mkdir /etc/dog_ex'
+                sh 'cp config/default.exs /etc/dog_ex/env_config.exs'
                 sh 'BUILD_ID="${BUILD_ID}" BUILD_STREAM="${buildStream}" make build'
             }
 
