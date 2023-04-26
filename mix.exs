@@ -33,7 +33,7 @@ defmodule DogAgentEx.MixProject do
     [
       {:base16, git: "https://github.com/goj/base16.git", tag: "1.0.0"},
       {:bbmustache, "1.11.0"},
-      {:erldocker, git: "https://github.com/Phonebooth/erldocker.git", branch: "feature/remove_lager"},
+      {:erldocker, git: "https://github.com/Phonebooth/erldocker.git", branch: "feature/erlang_24"},
       {:erlexec, "~> 1.0"},
       {:erlsh, git: "https://github.com/proger/erlsh.git", tag: "2", override: true},
       {:exometer_core, git: "https://github.com/fkrause98/exometer_core.git", override: true},
@@ -48,4 +48,6 @@ defmodule DogAgentEx.MixProject do
       {:uuid, "~> 2.0", hex: :uuid_erl}
     ]
   end
+
 end
+

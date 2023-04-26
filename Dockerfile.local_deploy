@@ -1,65 +1,48 @@
 # Build stage 0
 FROM elixir:1.14 as base
-#FROM erlang:latest as base
 RUN apt-get update &&  apt-get install -y libcap-dev iptables ipset less ack lsb-release vim jq curl dnsutils netcat
-
-#Set working directory
-RUN mkdir /data
-WORKDIR /data
-COPY mix.exs .
-COPY mix.lock .
-RUN mix local.hex --force
-RUN mix local.rebar --force
-RUN mix deps.get
-RUN mix compile
-
-#compiling erlexec separately because of glib error with mix build
-RUN git clone https://github.com/saleyn/erlexec.git
-RUN cd erlexec && make
-
-FROM base as compile
-
-WORKDIR /data
-COPY . .
-COPY --from=base /data/_build .
-copy config/config.exs config/
-COPY config/dev.exs /etc/dog_ex/env_config.exs
-
-RUN mix --version
-#Build the release
-RUN mix release
-
-#FROM debian:bullseye-slim as deploy
-FROM compile as deploy
-
-
 RUN mkdir -p /opt/dog_ex
 RUN mkdir -p /etc/dog_ex
 RUN mkdir -p /etc/iptables
-COPY config/config.json.dev /etc/dog_ex/config.json
 RUN mkdir -p /var/log/dog_ex
-# Install the released application
-COPY --from=compile /data/_build/dev/rel/dog /opt/dog_ex
-RUN cp /data/erlexec/priv/x86_64-pc-linux-gnu/exec-port /opt/dog_ex/lib/erlexec-*/priv/x86_64-pc-linux-gnu/exec-port
-RUN chmod 4555 /opt/dog_ex/lib/erlexec-*/priv/x86_64-pc-linux-gnu/exec-port
-
 RUN mkdir -p /home/dog/bin
 RUN cp /usr/sbin/ipset /home/dog/bin/ipset
 RUN cp /usr/sbin/iptables-save /home/dog/bin/
 RUN cp /usr/sbin/ip6tables-save /home/dog/bin/
 RUN cp /usr/sbin/iptables-restore /home/dog/bin/
 RUN cp /usr/sbin/ip6tables-restore /home/dog/bin/
-
 RUN ls -latr /opt/dog_ex
-
 RUN mkdir /etc/rabbitmq
 COPY csc_certs.sh /etc/rabbitmq/ 
-
 RUN mkdir -p /etc/dog_ex/certs \
 	&& mkdir -p /etc/dog_ex/private \
 	&& chmod 700 /etc/dog_ex/private
-
 RUN ln -s /usr/bin/python3 /usr/bin/python
+
+#Set working directory
+RUN mkdir /data
+WORKDIR /data
+
+ENV MIX_ENV=dev
+COPY mix.exs .
+COPY mix.lock .
+RUN mix local.hex --force
+RUN mix local.rebar --force
+RUN mix deps.get
+RUN mix deps.compile
+
+WORKDIR /data
+COPY lib lib
+RUN mix compile
+#Build the release
+COPY config/config.exs config/
+COPY config/dev.exs config/
+COPY config/runtime.dev.exs config/runtime.exs
+COPY config/config.json.dev /etc/dog_ex/config.json
+RUN mix release dog
+
+# Install the released application
+RUN mv /data/_build/dev/rel/dog/* /opt/dog_ex/
 
 CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog start"
 #CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "sleep infinity"
