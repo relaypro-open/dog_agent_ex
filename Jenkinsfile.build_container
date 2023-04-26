@@ -7,7 +7,7 @@ pipeline {
         BUILD_ENV = "${build_stream}"
         // this is a result of a backwards-incompatible change from JENKINS-24380
         BUILD_ID = "${VersionNumber(projectStartDate: '1970-01-01', versionNumberString: '${BUILD_DATE_FORMATTED, \"yyyy-MM-dd_H-m-s\"}')}"
-        DOG_ENV = ${props.dog_env}
+        DOG_ENV = "${props.dog_env}"
     }
 
     stages {
