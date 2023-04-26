@@ -48,8 +48,7 @@ pipeline {
                             ),                    
                             choice(
                                 name: 'build_stream',
-                                choices: ['release','nightly'],
-                                defaultValue: 'release'
+                                choices: ['release','nightly']
                             )                   
                         ])
                     ])
