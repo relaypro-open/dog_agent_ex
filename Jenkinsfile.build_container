@@ -60,7 +60,8 @@ pipeline {
                 DOG_ENV = "$params.dog_env"
             } 
             steps {
-                sh 'DOG_ENV="${DOG_ENV}" BUILD_ID="${BUILD_ID}" BUILD_STREAM="${buildStream}" make build'
+                sh 'echo "DOG_ENV=\$DOG_ENV"'
+                sh 'DOG_ENV="\$DOG_ENV" BUILD_ID="${BUILD_ID}" BUILD_STREAM="${buildStream}" make build'
             }
 
             post {
