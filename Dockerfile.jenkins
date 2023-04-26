@@ -9,6 +9,10 @@ WORKDIR /app
 COPY . /app
 
 RUN mkdir /etc/dog_ex
+
+ARG dog_env
+ENV dog_env $dog_env
+
 COPY config/runtime.${dog_env}.exs config/runtime.exs
 
 RUN mix deps.get \
