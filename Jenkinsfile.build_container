@@ -11,6 +11,52 @@ pipeline {
     }
 
     stages {
+         stage('Setup parameters') {
+            steps {
+                script { 
+                    properties([
+                        parameters([
+                            choice(
+                                name: 'branch',
+                                choices: ['main'] 
+                            ),
+                            string(
+                                name: 'hosts', 
+                                trim: true
+                            ),
+                            choice(
+                                name: 'env',
+                                choices:
+                                ['api.qa','api.pro','mob_pro','mob_qa','beta_qa','stage.qa','x.pro','x.qa','dev']
+                            ),
+                            booleanParam(
+                                name: 'deploy',
+                                defaultValue: false, 
+                                description: '' 
+                            ),
+                            choice(
+                                name: 'erlang_version',
+                                choices: ['24.3.4.2'] 
+                            ),                    
+                            string(
+                                name: 'flags', 
+                                defaultValue: '--tags upgrade', 
+                                trim: true
+                            ),
+                            choice(
+                                name: 'dog_env',
+                                choices: ['qa','pro']
+                            ),                    
+                            choice(
+                                name: 'build_stream',
+                                choices: ['release','nightly'],
+                                defaultValue: 'release'
+                            )                   
+                        ])
+                    ])
+                }
+            }
+        }
         stage('Build') {
             steps {
                 sh 'DOG_ENV="${DOG_ENV}" BUILD_ID="${BUILD_ID}" BUILD_STREAM="${buildStream}" make build'
