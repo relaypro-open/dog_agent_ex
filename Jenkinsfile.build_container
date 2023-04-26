@@ -1,13 +1,6 @@
 pipeline {
     agent { label 'docker' }
 
-    environment {
-        tag = VersionNumber(versionNumberString: '${BUILD_TIMESTAMP}');
-        // job environment variables
-        BUILD_ENV = "${build_stream}"
-        // this is a result of a backwards-incompatible change from JENKINS-24380
-        BUILD_ID = "${VersionNumber(projectStartDate: '1970-01-01', versionNumberString: '${BUILD_DATE_FORMATTED, \"yyyy-MM-dd_H-m-s\"}')}"
-    }
 
     stages {
          stage('Setup parameters') {
@@ -57,8 +50,14 @@ pipeline {
         }
         stage('Build') {
             environment {
+                tag = VersionNumber(versionNumberString: '${BUILD_TIMESTAMP}');
+                // job environment variables
+                BUILD_ENV = "${build_stream}"
+                // this is a result of a backwards-incompatible change from JENKINS-24380
+                BUILD_ID = "${VersionNumber(projectStartDate: '1970-01-01', versionNumberString: '${BUILD_DATE_FORMATTED, \"yyyy-MM-dd_H-m-s\"}')}"
                 DOG_ENV = "$params.dog_env"
-            } 
+            }
+
             steps {
                 echo "params.dog_env: $params.dog_env"
                 sh 'echo "dog_env=$dog_env"'
