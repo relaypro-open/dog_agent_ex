@@ -57,7 +57,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'DOG_ENV="${props.DOG_ENV}" BUILD_ID="${BUILD_ID}" BUILD_STREAM="${buildStream}" make build'
+                sh 'DOG_ENV="${params.DOG_ENV}" BUILD_ID="${BUILD_ID}" BUILD_STREAM="${buildStream}" make build'
             }
 
             post {
