@@ -45,7 +45,8 @@ defmodule DogAgentEx.MixProject do
       {:observer_cli, "~> 1.7"},
       {:parse_trans, "3.4.1", override: true},
       {:turtle, git: "https://github.com/relaypro-open/turtle.git", branch: "feature/erlang_24"},
-      {:uuid, "~> 2.0", hex: :uuid_erl}
+      {:uuid, "~> 2.0", hex: :uuid_erl},
+      {:dotenvy, "~> 0.7.0"}
     ]
   end
 

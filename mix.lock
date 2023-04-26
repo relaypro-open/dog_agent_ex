@@ -6,6 +6,7 @@
   "bear": {:hex, :bear, "1.0.0", "430419c1126b477686cde843e88ba0f2c7dc5cdf0881c677500074f704339a99", [:rebar3], [], "hexpm", "157b67901adf84ff0da6eae035ca1292a0ac18aa55148154d8c582b2c68959db"},
   "certifi": {:hex, :certifi, "2.9.0", "6f2a475689dd47f19fb74334859d460a2dc4e3252a3324bd2111b8f0429e7e21", [:rebar3], [], "hexpm", "266da46bdb06d6c6d35fde799bcb28d36d985d424ad7c08b5bb48f5b5cdd4641"},
   "credentials_obfuscation": {:hex, :credentials_obfuscation, "3.2.0", "becf48ed7c96938600f88f486031bcbf9b9c4e3353cc314ca131c347c4c7815c", [:rebar3], [], "hexpm", "fe8ece91a1ba6c8a08eb1063cfd5b063a723c5fe29a1fad6b7cbd76cb18d2eeb"},
+  "dotenvy": {:hex, :dotenvy, "0.7.0", "a4a21db71d11e2e9a25eef7533d8a7cf793cc4b15d10fe149f063977ecf0e5f5", [:mix], [], "hexpm", "7895e8129fd75cb46d29fe6929bb568f816e511c0629bef550b5f75a0666aa16"},
   "erldocker": {:git, "https://github.com/Phonebooth/erldocker.git", "dda7c4861bca156592c46fdd9199f1621b93b2d9", [branch: "feature/erlang_24"]},
   "erlexec": {:hex, :erlexec, "1.21.0", "748af41a9b77fde69bb82d5ec37e37384d4f849f971687de49d57e8cb59422ea", [:rebar3], [], "hexpm", "826616a344d1bc0a35c9d2c7175478166f607a4e3b14c878229fd405694d65c0"},
   "erlsh": {:git, "https://github.com/proger/erlsh.git", "4e8a107e4a082b5e687877cf08d152a45a715bf4", [tag: "2"]},

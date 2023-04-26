@@ -36,8 +36,8 @@ COPY lib lib
 RUN mix compile
 #Build the release
 COPY config/config.exs config/
-COPY config/dev.exs config/
 COPY config/runtime.dev.exs config/runtime.exs
+COPY config/dot_env.dev.config /etc/dog_ex/dot_env.config
 COPY config/config.json.dev /etc/dog_ex/config.json
 RUN mix release dog
 
