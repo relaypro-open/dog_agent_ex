@@ -36,7 +36,7 @@ archive: dist
 	   --exclude=".elixir_ls" \
 	   --exclude=".formatter.exs" \
 	   -C dog_agent_ex \
-	   . > dist/$(BUILD_STREAM)-$(BUILD_ID).tar.gz)
+	   . > dist/$(DOG_ENV)-$(BUILD_ID).tar.gz)
 
 dist:
 	mkdir dist
