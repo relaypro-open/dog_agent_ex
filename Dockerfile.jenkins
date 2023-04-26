@@ -11,9 +11,9 @@ COPY . /app
 RUN mkdir /etc/dog_ex
 
 ARG dog_env
-ENV dog_env $DOG_ENV
+ENV dog_env $dog_env
 
-COPY config/runtime.${DOG_ENV}.exs config/runtime.exs
+COPY config/runtime.${dog_env}.exs config/runtime.exs
 
 RUN mix deps.get \
     # Needed to remove tertiary beams with wrong OTP version

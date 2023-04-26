@@ -32,7 +32,7 @@ archive: dist
 	   --exclude=".elixir_ls" \
 	   --exclude=".formatter.exs" \
 	   -C dog_agent_ex \
-	   --build-arg dog_env=${DOG_ENV} \
+	   --build-arg dog_env=${dog_env} \
 	   . > dist/$(BUILD_STREAM)-$(BUILD_ID).tar.gz)
 
 dist:
