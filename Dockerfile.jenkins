@@ -11,8 +11,7 @@ COPY . /app
 RUN mkdir /etc/dog_ex
 
 ARG dog_env
-ENV DOG_ENV $dog_env
-RUN echo "The dog_env variable value is $DOG_ENV"
+RUN echo "The dog_env variable value is ${dog_env}"
 
 COPY config/runtime.${dog_env}.exs config/runtime.exs
 
