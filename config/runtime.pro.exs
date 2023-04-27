@@ -28,7 +28,7 @@ config :turtle,
   ]
 
 config :erldocker,
-  docker_http: <<"http+unix://%2Fvar%2Frun%2Fdocker.sock">>
+  docker_http: "http+unix://var/run/docker.sock"
 
 config :erlexec,
   debug: 0,
