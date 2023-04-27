@@ -1,0 +1,17 @@
+[Unit]
+Description=dog_ex
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+User=dog
+Group=dog
+ExecStart=/opt/dog_ex/dog_ex_start.sh
+ExecStop=/opt/dog_ex/dog_ex_stop.sh
+WorkingDirectory=/opt/dog_ex
+WorkingDirectoryPreserve=yes
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
