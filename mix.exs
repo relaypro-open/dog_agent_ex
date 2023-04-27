@@ -11,7 +11,8 @@ defmodule DogAgentEx.MixProject do
       releases: [
         dog: [
           include_executables_for: [:unix],
-          applications: [runtime_tools: :permanent]
+          applications: [runtime_tools: :permanent],
+          steps: [:assemble, :tar]
         ]
       ]
     ]
