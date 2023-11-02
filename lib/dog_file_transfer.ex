@@ -187,6 +187,10 @@ defmodule :dog_file_transfer do
             false ->
               {:reply, "text/json", :jsx.encode(ok: stdOut), state}
           end
+        {:ok, [stdout: stdOut, stderr: stdErr]} ->
+          stdCombined = [stdOut, StdErr]
+          parsedStdOut = Enum.join(stdCombined, "")
+          {:reply, "text/json", :jsx.encode(ok: parsedStdOut), state}
         {:ok, []} ->
           {:reply, "text/json", :jsx.encode(ok: []), state}
         {:error, [exit_status: _exitStatus, stdout: stdOut]} ->
