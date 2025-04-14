@@ -1,5 +1,5 @@
 # Build stage 0
-FROM elixir:1.14 as base
+FROM docker.io/elixir:1.14 as base
 RUN apt-get update &&  apt-get install -y libcap-dev iptables ipset less ack lsb-release vim jq curl dnsutils netcat xzip
 WORKDIR /tmp
 RUN wget -q https://ziglang.org/download/0.10.1/zig-linux-x86_64-0.10.1.tar.xz
@@ -55,5 +55,9 @@ FROM scratch AS tar
 COPY --from=base /data/burrito_out/dog_linux /
 COPY --from=base /tmp/dog_agent_ex.tar.gz / 
 
-CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "/opt/dog_ex/bin/dog start"
-#CMD /bin/bash -c "/etc/rabbitmq/csc_certs.sh" && /bin/bash -c "sleep infinity"
+FROM base as run
+ARG CERT_SOURCE=none
+RUN echo ${CERT_SOURCE}
+COPY scripts scripts/
+RUN chmod u+x scripts/entrypoint.sh
+ENTRYPOINT [ "scripts/entrypoint.sh" ]
